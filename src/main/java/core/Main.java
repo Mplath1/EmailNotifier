@@ -7,6 +7,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import javax.mail.Session;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -14,9 +15,7 @@ import java.util.Properties;
 
 
 public class Main extends Application {
-    //Controller class is a frankenstein mess and needs to be cleaned up but seems to work.
     public static PropertyValues appProps = new PropertyValues("config.properties");
-
 
     @Override
     public void start(Stage primaryStage) throws Exception{

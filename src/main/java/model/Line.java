@@ -16,7 +16,6 @@ public class Line {
 
     ///use comparator or comparable to check int value of licenseNumber against custList value
 
-
     public Line(String orderNumber, String deliveryDate, String notificationDate, String reportingDate, String portfolioCode, String licenseNumber, String customerName, String dollarValue) {
         this.orderNumber = orderNumber;
         this.deliveryDate = deliveryDate;
@@ -69,7 +68,6 @@ public class Line {
         this.haveEmail = haveEmail;
     }
 
-
     public boolean compareWith(String testLicense){
         int testingLicense = Integer.parseInt(testLicense);
         int lineLicense = Integer.parseInt(licenseNumber);
@@ -78,9 +76,5 @@ public class Line {
             return true;
         }
         return false;
-
     }
-
-
-
 }

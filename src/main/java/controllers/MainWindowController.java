@@ -31,7 +31,6 @@ import static core.Main.appProps;
 public class MainWindowController {
     @FXML
     GridPane grid;
-
     @FXML
     Button listSelect;
     @FXML
@@ -47,9 +46,9 @@ public class MainWindowController {
     @FXML
     RadioButton defaultMessageButton;
     @FXML
-    RadioButton customMessageButton; //if toggled show label & text field.
+    RadioButton customMessageButton;
     @FXML
-    TextField customMessageTextField; //if active deactivate runEverything button if blank
+    TextField customMessageTextField;
     @FXML
     Button runEverything;
     @FXML
@@ -78,7 +77,6 @@ public class MainWindowController {
         testNonSendable = new ArrayList<>();
         progressBar.setProgress(0);
         progressBar.setMinSize(250,10);
-        //progressBar.setVisible(false);
         progressLabel.setText("READY");
         progressLabel.setMinWidth(250);
         progressLabel.setAlignment(Pos.CENTER);
@@ -105,42 +103,15 @@ public class MainWindowController {
 
     }
 
-   /* @FXML
-    protected void masterSelect(ActionEvent event) { //REMOVE
-        //Possible update: Modify line in prenotification list and set text to bold if successfully sent
-        //Possible update: Group customer lines so that one email can be sent for multiple lines instead of
-        //seperate emails
-
-        //This section allows the user to select an xls file with all of or customer data
-        FileChooser fileChooser = new FileChooser();
-        //Next line ensures that only xls Excel file types will be selectable
-        FileChooser.ExtensionFilter extensionFilter = new FileChooser.ExtensionFilter("Excel File", "*.xls");
-        fileChooser.getExtensionFilters().add(extensionFilter);
-        //Next two lines set the start folder for the file selection for ease of use
-        File id = new File("Q:/");
-        fileChooser.setInitialDirectory(id);
-        //next line and if/else statement opens a file selection window to choose customer data file
-        File file = fileChooser.showOpenDialog(grid.getScene().getWindow());
-        if (file != null) {
-            customerFile.setText(file.toString());
-        } else {
-            System.out.println("You must select a file");
-        }
-
-    }*/
-
-
     @FXML
     protected void listSelect(ActionEvent event) throws IOException {
-        //This section allows the user to select an xls file with the current list to be sent
         FileChooser fileChooser = new FileChooser();
-        //Next line ensures that only xls Excel file types will be selectable
         FileChooser.ExtensionFilter extensionFilter = new FileChooser.ExtensionFilter("Excel File", "*.xls","*.xlsx");
         fileChooser.getExtensionFilters().add(extensionFilter);
-        //Next two lines set the start folder for the file selection for ease of use
+
         File id = new File(appProps.getProperty("defaultListLoadDirectory")); //SET THIS AS A VARIABLE
         fileChooser.setInitialDirectory(id);
-        //next line and if/else statement opens a file selection window to choose current list
+
         File file = fileChooser.showOpenDialog(grid.getScene().getWindow());
         if (file != null) {
             listFile.setText(file.toString());
@@ -151,38 +122,24 @@ public class MainWindowController {
 
     @FXML
     protected void prenotificationSelect(ActionEvent event) throws IOException {
-        //This section allows the user to select an xls file with our standard prenotification message
         FileChooser fileChooser = new FileChooser();
-        //Next line ensures that only xls Excel file types will be selectable
         FileChooser.ExtensionFilter extensionFilter = new FileChooser.ExtensionFilter("Excel File", "*.xls","*.xlsx");
         fileChooser.getExtensionFilters().add(extensionFilter);
-        //Next two lines set the start folder for the file selection for ease of use
+
         File id = new File(appProps.getProperty("defaultListLoadDirectory"));//SET THIS AS A VARIABLE
         fileChooser.setInitialDirectory(id);
-        //next line and if/else statement opens a file selection window to choose prenotification message
+
         File file = fileChooser.showOpenDialog(grid.getScene().getWindow());
         if (file != null) {
             prenotificationFile.setText(file.toString());
         } else {
             System.out.println("You must select a file");
         }
-
     }
 
 
     @FXML
     protected void doEverything(ActionEvent event) throws IOException {
-        //next lines ensure files are selected for all fields preventing Null Pointer Exception
-        //fix this to disable button after first click once it is confirmed it has proper files
-
-
-
-
-//        if (listFile.getText().isEmpty() || prenotificationFile.getText().isEmpty()) {
-//            System.out.println("There was a problem. Please make sure both files are selected");
-//            return;
-//        }
-
        displayAlreadySentMessage();
 
         //works with HSSF(.xls) or XSSF(.xlsx)
@@ -217,15 +174,8 @@ public class MainWindowController {
             ///////start of new method
             processList(testLines,emailSubject,emailMessage);
             ///put into overall cleanup method
-            //displayCompletionReport(); //DO NOT DISPLAY UNTIL COMPLETED. POSSIBLY NEW TASK
             //saveCompletedList();
             //updateOriginalFile(); //sync? must wait for process list to complete before running
-
-
-            ///alter original file to leave notes
-            ///
-
-
         };
 
 
@@ -326,57 +276,7 @@ public class MainWindowController {
         HashMap<String,String> testDatabaseMap = new HashMap<>();
        testDatabaseMap.put(testLines.get(5).getLicenseNumber(),"mplath@usawineimports.com");
 
-        Task task  = new Task(){ //TASK NO LONGER UPDATING PROGRESS??? TASK IS WRONG AS NEVER RUNS SETONSUCCEED
-
-            @Override
-            protected Object call() throws Exception {
-                for (int i = 0; i < testLines.size(); i++) {
-                    //need to check line licence against customer license
-                    String emailAddresses = testDatabaseMap.get(testLines.get(i).getLicenseNumber());
-
-                    if (StringUtils.isBlank(emailAddresses)) {
-                        emailAddresses = ""; //seems redundant but had trouble with cust Miss Korea trying to create email with null
-                    }
-                    System.out.println(testLines.get(i).getCustomerName() + " " + emailAddresses);
-                    boolean success = false;
-                    if (!emailAddresses.equals(null) && !emailAddresses.isEmpty() && emailAddresses.trim().length() != 0) {
-//
-//                        Attachment otherAttachment = new Attachment(testLines.get(i), prenotificationFile.getText());
-//                        Workbook theAttachment = (Workbook) otherAttachment.call();
-//                       Email theEmail = new Email(emailAddresses, prenotificationFile.getText().toString(),emailSubject,emailMessage);
-//                       System.out.println("Send email for " +
-//                               theAttachment.getSheetAt(0).getRow(22).getCell(6) + " to " + emailAddresses + " Total:$" +
-//                                theAttachment.getSheetAt(0).getRow(22).getCell(7));
-                        noEmailsSent++;
-                        updateMessage("Sending for " + testLines.get(i).getCustomerName());
-                        Thread.sleep(500);
-//                       success = (boolean) theEmail.call();
-//                       System.out.println(success);
-                    } else if (emailAddresses.equals(null) || emailAddresses.isEmpty() || emailAddresses.trim().length() == 0) {
-                        testNonSendable.add(testLines.get(i).getCustomerName());
-//                        System.out.println(testLines.get(i).getCustomerName() + " added to nonsendable");
-                        updateMessage("Unable to send for" + testLines.get(i).getCustomerName());
-                        Thread.sleep(500);
-
-//                //excel attachment will instead be printed out by default printer here
-
-                        noPrinted++;
-                    }
-
-                    updateProgress(i,testLines.size());
-                    updateMessage("");
-
-                    Thread.sleep(500);
-                }
-                updateProgress(testLines.size(),testLines.size());
-                //System.out.println("TASK COMPLETE- PROGRESS FINISHED");
-
-                return null;
-            }
-
-        };
-
-            Task altTask = new Task() { //WORKS. USE THIS
+            Task altTask = new Task() {
                 @Override
                 protected Object call() throws Exception {
                     for(int i = 1; i<testLines.size(); i++){
@@ -400,8 +300,10 @@ public class MainWindowController {
                         }
                         String message = "";
                         if(success){
+                            noEmailsSent++;
                             message += "Email sent for:" + testLines.get(i).getCustomerName();
                         }else{
+                            noPrinted++;
                             message += "Unable to send for:" + testLines.get(i).getCustomerName();
                         }
                         message += "\n" + i + "/" + testLines.size();
@@ -418,14 +320,13 @@ public class MainWindowController {
 
             progressBar.progressProperty().bind(altTask.progressProperty());
             progressLabel.textProperty().bind(altTask.messageProperty());
+
         altTask.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
             @Override
             public void handle(WorkerStateEvent event) {
                 displayCompletionReport();
                 try {
-                    System.out.println("SUCCESS ON TASK");
                     saveCompletedList();
-                    System.out.println("SUCCESS ON SAVE COMPLETED LIST");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -444,61 +345,6 @@ public class MainWindowController {
             new Thread(altTask).start();
         }
 
-    //}
-
-    //DEPRECATED
-    /*private static HSSFWorkbook readXLSWorkbook(String filename) throws IOException {
-        try (FileInputStream fis = new FileInputStream(filename)) {
-            return new HSSFWorkbook(fis);
-        }
-
-    }*/
-    //DEPRECATED
-    /*private static XSSFWorkbook readXLXSWorkbook(String filename) throws IOException {
-        try (FileInputStream fis = new FileInputStream(filename)) {
-            return new XSSFWorkbook(fis);
-        }
-
-    }*/
-
-    //DEPRECATED
-    /*@FXML  //ADD VARIOUS SCHEMA AND OPTIONS
-    public static HSSFWorkbook createXLSAttachement(Line theLine, String theFile) {
-        try {
-            FileInputStream fis = new FileInputStream(new File(theFile));
-            HSSFWorkbook attachmentWorkbook = new HSSFWorkbook(fis);
-            Sheet currentSheet = attachmentWorkbook.getSheetAt(0);
-            Row currentRow = currentSheet.getRow(22);
-            Cell currentCell = currentRow.getCell(0);
-            currentCell.setCellValue(theLine.orderNumber);
-            currentCell = currentRow.getCell(1);
-            currentCell.setCellValue(theLine.deliveryDate);
-            currentCell = currentRow.getCell(2);
-            currentCell.setCellValue(theLine.notificationDate);
-            currentCell = currentRow.getCell(3);
-            currentCell.setCellValue(theLine.reportingDate);
-            currentCell = currentRow.getCell(4);
-            currentCell.setCellValue(theLine.portfolioCode);
-            currentCell = currentRow.getCell(5);
-            currentCell.setCellValue(theLine.licenseNumber);
-            currentCell = currentRow.getCell(6);
-            currentCell.setCellValue(theLine.customerName);
-            currentCell = currentRow.getCell(7);
-            currentCell.setCellValue("$" + theLine.dollarValue);
-
-            FileOutputStream fileout = new FileOutputStream(new File(theFile));
-            attachmentWorkbook.write(fileout);
-            attachmentWorkbook.close();
-            fileout.close();
-
-            return attachmentWorkbook;
-        } catch (IOException e) {
-            e.printStackTrace();
-
-        }
-        return null;
-
-    }*/
     //needs to be part of a class implementing Callable. Or load workbook intially and jsut alter each time.
     public Workbook createAttachement(Line theLine, String theFile) {
         try {
@@ -534,43 +380,6 @@ public class MainWindowController {
         }
         return null;
     }
-
-    //DEPRECATED
-    //ADD VARIOUS SCHEMA AND OPTIONS
-   /* public static ArrayList<Line> loadXLSListToSend(HSSFWorkbook workbook) {
-        ArrayList<Line> theLines = new ArrayList<>();
-
-        Iterator<Sheet> sheetIterator = workbook.sheetIterator();
-
-        Sheet sheet = workbook.getSheetAt(0);
-        Iterator<Row> rowIterator = sheet.rowIterator();
-        while (rowIterator.hasNext()) {
-            Row row = rowIterator.next();
-            if (row != null) {
-                Iterator<Cell> cellIterator = row.cellIterator();
-                ArrayList<String> rowContents = new ArrayList(8);
-                while (cellIterator.hasNext()) {
-                    Cell cell = cellIterator.next();
-                    String cellValue = cell.toString();
-                    rowContents.add(cellValue);
-
-                }
-                System.out.println(rowContents.get(0));
-                Line currentLine = new Line(rowContents.get(0),
-                        rowContents.get(1).toString(),
-                        rowContents.get(2).toString(),
-                        rowContents.get(3).toString(),
-                        rowContents.get(4).toString(),
-                        rowContents.get(5).toString(),
-                        rowContents.get(6).toString(),
-                        rowContents.get(7).toString()
-                );
-                theLines.add(currentLine);
-
-            }
-        }
-        return theLines;
-    }*/
 
     public static ArrayList<Line> loadListToSend(Workbook workbook) {
         ArrayList<Line> theLines = new ArrayList<>();
@@ -608,7 +417,7 @@ public class MainWindowController {
     }
 
 
-    //building a list of the customers found on the reportable list //USE CONFIG
+    //building a list of the customers found on the reportable list //USE CONFIG. IMPLEMENT DAO
     public HashMap<String,String> getDatabaseList(ArrayList<Line> listOfPrenotifications) {
         //throws way too many null pointer exceptions when program runs. possible wholeslaers. research and correct
         String dbConnection = null;
@@ -679,8 +488,6 @@ public class MainWindowController {
                 return oldFile;
             }
         }
-
-
         return null;
     }
 

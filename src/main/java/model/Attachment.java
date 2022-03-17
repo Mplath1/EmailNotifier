@@ -1,10 +1,10 @@
 package model;
 
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -24,11 +24,10 @@ public class Attachment implements Callable {
         theWorkbook = null;
     }
 
-
     @Override
     public Object call() throws Exception {
         try {
-            theWorkbook = createAttachement(theLine,theFile);
+            theWorkbook = createAttachment(theLine,theFile);
 
         } catch(Exception e){
             e.printStackTrace();
@@ -36,13 +35,10 @@ public class Attachment implements Callable {
         return theWorkbook;
     }
 
-
-
-    //currently only uses HSSF (.xls). Modify to also enable XSSF (.xlsx)
-    Workbook createAttachement(Line theLine, String theFile) {
+    Workbook createAttachment(Line theLine, String theFile) {
         try {
             FileInputStream fis = new FileInputStream(new File(theFile));
-            Workbook attachmentWorkbook = new HSSFWorkbook(fis);
+            Workbook attachmentWorkbook = new XSSFWorkbook(fis);
             Sheet currentSheet = attachmentWorkbook.getSheetAt(0);
             Row currentRow = currentSheet.getRow(22);
             Cell currentCell = currentRow.getCell(0);
