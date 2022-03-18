@@ -40,21 +40,6 @@ public class PropertyValues {
                 throw new FileNotFoundException("Property file " + propertiesFileName + " could not be located!");
             }
 
-            Date time = new Date(System.currentTimeMillis());
-
-            //Server Properties
-            String server = properties.getProperty("server");
-            String instanceName = properties.getProperty("instanceName");
-            String serverPassword = properties.getProperty("serverPassword");
-            String user = properties.getProperty("user");
-            String dbName = properties.getProperty("dbName");
-
-            //Text Properties
-            String defaultListLoadDirectory = properties.getProperty("defaultListLoadDirectory");
-
-            values = "";
-            System.out.println(values);
-
         }catch (Exception e){
 
         }finally {

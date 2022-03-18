@@ -15,6 +15,7 @@ import model.Attachment;
 import model.Customer;
 import model.Email;
 import model.Line;
+import org.apache.batik.w3c.dom.events.CustomEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.usermodel.Cell;
@@ -69,6 +70,7 @@ public class MainWindowController {
     static int noEmailsSent;
     static int noPrinted;
     ArrayList<String> testNonSendable;
+    ArrayList<Customer> nonSendableCustomers;
 
     public void initialize(){
 
@@ -80,8 +82,11 @@ public class MainWindowController {
         progressLabel.setText("READY");
         progressLabel.setMinWidth(250);
         progressLabel.setAlignment(Pos.CENTER);
+        setBindings();
 
+    }
 
+    protected void setBindings(){
         customMessageButton.selectedProperty().bindBidirectional(customMessageTextField.visibleProperty());
         customMessageButton.selectedProperty().bindBidirectional(customMessageTextField.editableProperty());
         BooleanBinding runButtonBinding = customMessageButton.selectedProperty()
@@ -98,9 +103,6 @@ public class MainWindowController {
         emailSubjectComboBox.getItems().add("NYSLA Prenotification"); //load default names from resources folder
         emailSubjectComboBox.getItems().add("Final Notice");
         emailSubjectComboBox.setEditable(true);
-
-
-
     }
 
     @FXML
@@ -462,6 +464,7 @@ public class MainWindowController {
                     if(currentCustomer.getCustomerEmail() != null && currentCustomer.getCustomerEmail() != "None"){
                         try {
                             customerEmailMap.put(currentCustomer.getLicenseNumber(), currentCustomer.getCustomerEmail());
+                            //customerEmailMap.put(currentCustomer.getLicenseNumber(),currentCustomer) //NEEDS IMPLEMENTATION
                         }catch (Exception e){
                             //System.out.println(e + " when trying to add license #" + currentCustomer.getLicenseNumber() + " to map.");
                         }
