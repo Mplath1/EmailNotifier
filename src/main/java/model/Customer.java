@@ -2,6 +2,7 @@ package model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * Created by Michael Plath on 8/8/2018.
@@ -9,7 +10,7 @@ import java.util.List;
 public class Customer {
     private String licenseNumber;
     private String customerName;
-    private String customerEmail;
+    private String customerEmail; //TODO: implement customerEmailList and later portfolio/salesRepEmailList
     private List<Invoice> invoiceList;
 
     public Customer(String licenseNumber, String customerName, String customerEmail) {
@@ -42,6 +43,7 @@ public class Customer {
         return customerName;
     }
 
+    //TODO: validate and clean email address when setting
     public void setCustomerEmail(String customerEmail) {
         this.customerEmail = customerEmail;
     }
@@ -54,6 +56,18 @@ public class Customer {
         return invoiceList;
     }
 
+    public boolean validateEmail(String email)
+    {
+        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\."+
+                "[a-zA-Z0-9_+&*-]+)*@" +
+                "(?:[a-zA-Z0-9-]+\\.)+[a-z" +
+                "A-Z]{2,7}$";
+        Pattern pat = Pattern.compile(emailRegex);
+        if (email == null)
+            return false;
+        return pat.matcher(email).matches();
+    }
+    
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
