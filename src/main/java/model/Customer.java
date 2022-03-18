@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 public class Customer {
     private String licenseNumber;
     private String customerName;
-    private String customerEmail; //TODO: implement customerEmailList and later portfolio/salesRepEmailList
+    private String customerEmail; //TODO: implement customerEmailListMap<address, boolean(sent)> and later portfolio/salesRepEmailList
     private List<Invoice> invoiceList;
 
     public Customer(String licenseNumber, String customerName, String customerEmail) {
@@ -45,7 +45,13 @@ public class Customer {
 
     //TODO: validate and clean email address when setting
     public void setCustomerEmail(String customerEmail) {
-        this.customerEmail = customerEmail;
+        boolean valid = validateEmail(customerEmail);
+        if(valid){
+            this.customerEmail = customerEmail;
+            System.out.println("Valid Email!");
+        }else{
+            System.out.println("Invalid Email!");
+        }
     }
 
     public boolean addInvoice(Invoice invoice){
@@ -67,7 +73,7 @@ public class Customer {
             return false;
         return pat.matcher(email).matches();
     }
-    
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

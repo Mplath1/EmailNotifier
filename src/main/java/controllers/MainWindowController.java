@@ -354,9 +354,9 @@ public class MainWindowController {
 
     //TODO: eliminate other processList method
     public void processList2(ArrayList<Customer> customerList, String emailSubject, String emailMessage){
-        //HashMap<String,String> testDatabaseMap = getDatabaseList(testLines);
-        //customerList.get(5).setCustomerEmail("mplath@usawineimports.com");
-
+//        customerList.get(5).setCustomerEmail("mplath@usawineimports.com");
+//        customerList.get(6).setCustomerEmail(null);
+//        customerList.get(7).setCustomerEmail("ArthurDent");
 
         Task altTask = new Task() {
             @Override
@@ -420,7 +420,6 @@ public class MainWindowController {
         altTask.setOnFailed(new EventHandler<WorkerStateEvent>() {
             @Override
             public void handle(WorkerStateEvent event) {
-                //alert?
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setHeaderText("ERROR");
                 alert.setContentText("There was an error!");
@@ -429,40 +428,6 @@ public class MainWindowController {
 
         new Thread(altTask).start();
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     //needs to be part of a class implementing Callable. Or load workbook intially and jsut alter each time.
     public Workbook createAttachement(Line theLine, String theFile) {
@@ -608,26 +573,6 @@ public class MainWindowController {
         return listOfPrenotifications;
 
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     //building a list of the customers found on the reportable list //USE CONFIG. IMPLEMENT DAO

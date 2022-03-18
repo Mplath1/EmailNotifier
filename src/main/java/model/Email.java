@@ -77,7 +77,7 @@ public class Email implements Callable {
             if(recipient.contains(";")){
                 String[] listOfRecipients=splitRecipients(recipient);
                 for (String theRecipient : listOfRecipients){
-                    if(isValid(theRecipient)){
+                    if(isValid(theRecipient)){ //TODO: can be eliminated as addresses are validated in customerClass
                         message.addRecipient(Message.RecipientType.TO,new InternetAddress(theRecipient));
                     }else if(!isValid(theRecipient)){
                         MimeMessage invalid = new MimeMessage(session);
@@ -105,10 +105,10 @@ public class Email implements Callable {
                     }
                 }
             }else{
-                if(isValid(recipient)){
+                if(isValid(recipient)){ //TODO: can be eliminated as addresses are validated in customerClass
                     recipient =checkForBrackets(recipient);
                     message.addRecipient(Message.RecipientType.TO, new InternetAddress(recipient));
-                }else if(!isValid(recipient)){
+                }else if(!isValid(recipient)){ //TODO: can be eliminated as addresses are validated in customerClass
                     MimeMessage invalid = new MimeMessage(session);
                     invalid.setFrom("mplath@usawineimports.com");
                     invalid.addRecipient(Message.RecipientType.TO,new InternetAddress("mplath@usawineimports.com"));
@@ -232,7 +232,7 @@ public class Email implements Callable {
         return toKeep;
     }
 
-    //method checks if email is a possible valid email address. For example it must contain an '@' etc.
+    //TODO: can be eliminated as addresses are validated in customerClass
     public static boolean isValid(String email)
     {
 
