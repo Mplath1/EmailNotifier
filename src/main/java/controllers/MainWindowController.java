@@ -172,7 +172,7 @@ public class MainWindowController {
 
 
             ///////start of new method
-            processList(testLines,emailSubject,emailMessage);
+            processList(testLines,emailSubject,emailMessage); //TODO:processList must accept Customers instead of Lines
             ///put into overall cleanup method
             //saveCompletedList();
             //updateOriginalFile(); //sync? must wait for process list to complete before running
@@ -273,6 +273,7 @@ public class MainWindowController {
 
     public void processList(ArrayList<Line> testLines, String emailSubject, String emailMessage){
         //HashMap<String,String> testDatabaseMap = getDatabaseList(testLines);
+        //use database to retrive and set emailAddresses
         HashMap<String,String> testDatabaseMap = new HashMap<>();
        testDatabaseMap.put(testLines.get(5).getLicenseNumber(),"mplath@usawineimports.com");
 
@@ -453,6 +454,46 @@ public class MainWindowController {
         }
         return customerList;
     }
+    
+    //TODO: needs testing with live database. check for bad data and null values.
+    public ArrayList<Customer> populateEmailAddresses(ArrayList<Customer> listOfPrenotifications) {
+        //TODO: seperate and create connection factory and DAO patterns
+        String dbConnection = null;
+        try {
+            dbConnection = appProps.getProperty("server") + ";" + appProps.getProperty("instanceName")
+                    + ";databasename=" + appProps.getProperty("dbName") + ";user=" + appProps.getProperty("user")
+                    + ";password=" + appProps.getProperty("serverPassword");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        //TODO: rewrite query to include IN clause reducing result set
+        String query = "SELECT strEmail, strCompanyName, memWebSite FROM tblARCustomer";// WHERE strCustomerType = Retail";
+        progressLabel.setText("Connecting to database...");
+        try (Connection conn = DriverManager.getConnection(dbConnection)) {
+            System.out.println("Connection was successful");
+            progressLabel.setText("Connected to database");
+            PreparedStatement preparedStatement = conn.prepareStatement(query);
+            for (Customer custFromInput : listOfPrenotifications) {
+                String license = custFromInput.getLicenseNumber();
+                System.out.println(license);
+                ResultSet rs = preparedStatement.executeQuery();
+                while(rs.next()) {
+                    if(rs.getString("strmEmail").trim().replaceAll("\\.0*$", "") == custFromInput.getLicenseNumber()){
+                        custFromInput.setCustomerEmail(rs.getString("memWebsite")); //check for null too
+                        }
+                    }
+                }
+        }catch(SQLException e){
+            System.out.println(e);
+        }
+
+        return listOfPrenotifications;
+
+    }
+
+
+
+
 
 
 

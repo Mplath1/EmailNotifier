@@ -42,6 +42,10 @@ public class Customer {
         return customerName;
     }
 
+    public void setCustomerEmail(String customerEmail) {
+        this.customerEmail = customerEmail;
+    }
+
     public boolean addInvoice(Invoice invoice){
         return invoiceList.add(invoice);
     }
