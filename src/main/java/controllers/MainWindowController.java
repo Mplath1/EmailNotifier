@@ -11,10 +11,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
 import javafx.stage.FileChooser;
-import model.Attachment;
-import model.Customer;
-import model.Email;
-import model.Line;
+import model.*;
 import org.apache.batik.w3c.dom.events.CustomEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.*;
@@ -155,6 +152,7 @@ public class MainWindowController {
         }
 
         ArrayList<Line> testLines = loadListToSend(wb);
+        ArrayList<Customer> customerListToSend = loadListToSend2(wb); //TODO: eliminate Line class and use this
 
 
         String emailSubject = String.valueOf(emailSubjectComboBox.getSelectionModel().getSelectedItem());
@@ -291,7 +289,7 @@ public class MainWindowController {
                         if(!emailAddresses.equals(null) && !emailAddresses.isEmpty() && emailAddresses.trim().length() != 0) {
 
                             Attachment otherAttachment = new Attachment(testLines.get(i), prenotificationFile.getText());
-                            Workbook theAttachment = (Workbook) otherAttachment.call();
+                            Workbook theAttachment = (Workbook) otherAttachment.call(); //TODO: call correct POI here
                             Email theEmail = new Email(emailAddresses, prenotificationFile.getText().toString(), emailSubject, emailMessage);
 //                            System.out.println("Send email for " +
 //                                    theAttachment.getSheetAt(0).getRow(22).getCell(6) + " to " + emailAddresses + " Total:$" +
@@ -417,6 +415,60 @@ public class MainWindowController {
         }
         return theLines;
     }
+
+    //TODO: eliminate other loadListToSend method and use this to populate data
+    public static ArrayList<Customer> loadListToSend2(Workbook workbook) {
+        ArrayList<Customer> customerList = new ArrayList<>();
+
+        Iterator<Sheet> sheetIterator = workbook.sheetIterator();
+
+        Sheet sheet = workbook.getSheetAt(0);
+        Iterator<Row> rowIterator = sheet.rowIterator();
+        while (rowIterator.hasNext()) {
+            Row row = rowIterator.next();
+            if (row != null) {
+                Iterator<Cell> cellIterator = row.cellIterator();
+                ArrayList<String> rowContents = new ArrayList(8);
+                while (cellIterator.hasNext()) {
+                    Cell cell = cellIterator.next();
+                    String cellValue = cell.toString();
+                    rowContents.add(cellValue);
+
+                }
+                Customer currentCustomer = new Customer(rowContents.get(5),rowContents.get(6));
+                Invoice currentInvoice = new Invoice(rowContents.get(0),rowContents.get(1),rowContents.get(2),
+                        rowContents.get(3),rowContents.get(4),rowContents.get(7));
+
+                if(!customerList.contains(currentCustomer)){
+                    currentCustomer.addInvoice(currentInvoice);
+                    customerList.add(currentCustomer);
+
+                }else{
+                    currentCustomer = customerList.get(customerList.indexOf(currentCustomer));
+                    currentCustomer.addInvoice(currentInvoice);
+                }
+
+
+            }
+        }
+        return customerList;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     //building a list of the customers found on the reportable list //USE CONFIG. IMPLEMENT DAO

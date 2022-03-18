@@ -23,6 +23,13 @@ public class Customer {
         invoiceList = new ArrayList<>();
     }
 
+    //TODO: Use this constructor movving forward and set customerEmail upon database retrieval
+    public Customer(String licenseNumber, String customerName) {
+        this.licenseNumber = licenseNumber;
+        this.customerName = customerName;
+        invoiceList = new ArrayList<>();
+    }
+
     public String getLicenseNumber() {
         return licenseNumber;
     }
@@ -41,5 +48,20 @@ public class Customer {
 
     public List<Invoice> getInvoiceList(){
         return invoiceList;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Customer customer = (Customer) o;
+
+        return licenseNumber.equals(customer.licenseNumber);
+    }
+
+    @Override
+    public int hashCode() {
+        return licenseNumber.hashCode();
     }
 }
