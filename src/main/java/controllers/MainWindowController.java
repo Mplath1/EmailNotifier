@@ -74,6 +74,7 @@ public class MainWindowController {
         noEmailsSent = 0;
         noPrinted = 0;
         testNonSendable = new ArrayList<>();
+        nonSendableCustomers = new ArrayList<>();
         progressBar.setProgress(0);
         progressBar.setMinSize(250,10);
         progressLabel.setText("READY");
@@ -172,7 +173,8 @@ public class MainWindowController {
 
 
             ///////start of new method
-            processList(testLines,emailSubject,emailMessage); //TODO:processList must accept Customers instead of Lines
+            //processList(testLines,emailSubject,emailMessage); //TODO:processList must accept Customers instead of Lines
+            processList2(customerListToSend,emailSubject,emailMessage);
             ///put into overall cleanup method
             //saveCompletedList();
             //updateOriginalFile(); //sync? must wait for process list to complete before running
@@ -206,9 +208,13 @@ public class MainWindowController {
                  "No. of prenotification emails sent: " + noEmailsSent + "\n"+
                  "No. of prenotifications to be printed: " + noPrinted + "\n" +
                  "Unable to send for:\n"); //SAVE TO ORIGINAL FILE?
-        for (String customer : testNonSendable){
-             sb.append(customer + "\n");
+//        for (String customer : testNonSendable){
+//             sb.append(customer + "\n");
+//        }
+        for (Customer current : nonSendableCustomers){
+            sb.append(current.getCustomerName() + "\n");
         }
+
         String fullMessage = sb.toString();
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setHeaderText("Results");
@@ -273,7 +279,6 @@ public class MainWindowController {
 
     public void processList(ArrayList<Line> testLines, String emailSubject, String emailMessage){
         //HashMap<String,String> testDatabaseMap = getDatabaseList(testLines);
-        //use database to retrive and set emailAddresses
         HashMap<String,String> testDatabaseMap = new HashMap<>();
        testDatabaseMap.put(testLines.get(5).getLicenseNumber(),"mplath@usawineimports.com");
 
@@ -345,6 +350,118 @@ public class MainWindowController {
 
             new Thread(altTask).start();
         }
+
+
+    //TODO: eliminate other processList method
+    public void processList2(ArrayList<Customer> customerList, String emailSubject, String emailMessage){
+        //HashMap<String,String> testDatabaseMap = getDatabaseList(testLines);
+        //customerList.get(5).setCustomerEmail("mplath@usawineimports.com");
+
+        Task altTask = new Task() {
+            @Override
+            protected Object call() throws Exception {
+                for(int i = 0; i<customerList.size(); i++){
+                    boolean success = false;
+                    String emailAddresses = customerList.get(i).getCustomerEmail();
+                    if (StringUtils.isBlank(emailAddresses)) {
+                        emailAddresses = ""; //seems redundant but had trouble with cust Miss Korea trying to create email with null
+                    }
+                    System.out.println(customerList.get(i).getCustomerName() + " email is " + customerList.get(i).getCustomerEmail());
+                    if(!emailAddresses.equals(null) && !emailAddresses.isEmpty() && emailAddresses.trim().length() != 0) {
+
+                        Attachment otherAttachment = new Attachment(customerList.get(i), prenotificationFile.getText());
+                        Workbook theAttachment = (Workbook) otherAttachment.call(); //TODO: call correct POI here
+                        System.out.println("Attachment made");
+                        Email theEmail = new Email(emailAddresses, prenotificationFile.getText().toString(), emailSubject, emailMessage);
+                            System.out.println("Send email for " +
+                                    theAttachment.getSheetAt(0).getRow(22).getCell(6) + " to " + emailAddresses + " Total:$" +
+                                   theAttachment.getSheetAt(0).getRow(22).getCell(7));
+                        success = (boolean) theEmail.call();
+                    }else{
+                        System.out.println("Adding " + customerList.get(i).getCustomerName() + " to nonsendable");
+                        nonSendableCustomers.add(customerList.get(i));
+                    }
+                    String message = "";
+                    if(success){
+                        noEmailsSent++;
+                        message += "Email sent for:" + customerList.get(i).getCustomerName();
+                    }else{
+                        noPrinted++;
+                        message += "Unable to send for:" + customerList.get(i).getCustomerName();
+                    }
+                    System.out.println("After success block");
+                    message += "\n" + i + "/" + customerList.size();
+
+                    System.out.println(i + "/" + customerList.size() +"\t" + success + "\n");
+                    updateProgress(i,customerList.size());
+                    updateMessage(message);
+
+                    Thread.sleep(100);
+                }
+                return null;
+            }
+        };
+
+        progressBar.progressProperty().bind(altTask.progressProperty());
+        progressLabel.textProperty().bind(altTask.messageProperty());
+
+        altTask.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+            @Override
+            public void handle(WorkerStateEvent event) {
+                displayCompletionReport();
+                try {
+                    saveCompletedList();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        altTask.setOnFailed(new EventHandler<WorkerStateEvent>() {
+            @Override
+            public void handle(WorkerStateEvent event) {
+                //alert?
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setHeaderText("ERROR");
+                alert.setContentText("There was an error!");
+            }
+        });
+
+        new Thread(altTask).start();
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     //needs to be part of a class implementing Callable. Or load workbook intially and jsut alter each time.
     public Workbook createAttachement(Line theLine, String theFile) {
@@ -454,7 +571,7 @@ public class MainWindowController {
         }
         return customerList;
     }
-    
+
     //TODO: needs testing with live database. check for bad data and null values.
     public ArrayList<Customer> populateEmailAddresses(ArrayList<Customer> listOfPrenotifications) {
         //TODO: seperate and create connection factory and DAO patterns

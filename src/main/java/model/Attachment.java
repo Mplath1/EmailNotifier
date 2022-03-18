@@ -26,15 +26,16 @@ public class Attachment implements Callable {
         theWorkbook = null;
     }
 
-    public Attachment(Customer customer){
+    public Attachment(Customer customer, String theFile){
         this.customer = customer;
+        this.theFile = theFile;
     }
 
     @Override
     public Object call() throws Exception {
         try {
-            theWorkbook = createAttachment(theLine,theFile);
-
+            //theWorkbook = createAttachment(theLine,theFile);
+            createAttachment();
         } catch(Exception e){
             e.printStackTrace();
         }
