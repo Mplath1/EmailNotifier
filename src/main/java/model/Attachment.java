@@ -80,7 +80,8 @@ public class Attachment implements Callable {
     //TODO: needs testing, planning for loading of template
     Workbook createAttachment() throws InvalidFormatException {
         try {
-            File fis = new File("LOAD FROM CONFIG");
+            //File fis = new File("LOAD FROM CONFIG");
+            File fis = new File(theFile);
             Workbook attachmentWorkbook = new XSSFWorkbook(fis);
             Sheet currentSheet = attachmentWorkbook.getSheetAt(0);
             int startingRow = 22;
@@ -106,11 +107,14 @@ public class Attachment implements Callable {
             currentCell.setCellValue("$" + currentInvoice.getDollarValue());
             startingRow++;
             }
-
-            FileOutputStream fileout = new FileOutputStream(new File(theFile));
-            attachmentWorkbook.write(fileout);
+            String tempOutFile = "src/resources/AttachmentTemplates";
+            FileOutputStream fileout = new FileOutputStream(new File(tempOutFile + "/temp.xlsx")); //writes correctly but freeses
+            attachmentWorkbook.write(fileout); //crashes here with EOF Exception and corrupts xslx file
+            System.out.println("Temp file written...");
             attachmentWorkbook.close();
+            System.out.println("...and closed");
             fileout.close();
+            System.out.println("Template closed");
 
             return attachmentWorkbook;
         } catch (IOException e) {

@@ -100,6 +100,8 @@ public class MainWindowController {
 
         emailSubjectComboBox.getItems().add("NYSLA Prenotification"); //load default names from resources folder
         emailSubjectComboBox.getItems().add("Final Notice");
+
+
         emailSubjectComboBox.setEditable(true);
     }
 
@@ -164,14 +166,6 @@ public class MainWindowController {
             emailMessage = customMessageTextField.getText();
         }
 
-        //These are now in process list as they are only present in that function
-        //HashMap<String,String> testDatabaseMap = getDatabaseList(testLines);
-        //ArrayList<String> testNonSendable = new ArrayList<>();
-
-
-
-
-
             ///////start of new method
             //processList(testLines,emailSubject,emailMessage); //TODO:processList must accept Customers instead of Lines
             processList2(customerListToSend,emailSubject,emailMessage);
@@ -204,9 +198,9 @@ public class MainWindowController {
 
     public void displayCompletionReport(){
         StringBuilder sb = new StringBuilder();
-         sb.append("******Prenotification Process Complete******\n"+
-                 "No. of prenotification emails sent: " + noEmailsSent + "\n"+
-                 "No. of prenotifications to be printed: " + noPrinted + "\n" +
+         sb.append("******Process Complete******\n"+
+                 "Emails sent: " + noEmailsSent + "\n"+
+                 "To be printed: " + noPrinted + "\n" +
                  "Unable to send for:\n"); //SAVE TO ORIGINAL FILE?
 //        for (String customer : testNonSendable){
 //             sb.append(customer + "\n");
@@ -354,7 +348,7 @@ public class MainWindowController {
 
     //TODO: eliminate other processList method
     public void processList2(ArrayList<Customer> customerList, String emailSubject, String emailMessage){
-//        customerList.get(5).setCustomerEmail("mplath@usawineimports.com");
+       customerList.get(5).setCustomerEmail("mplath@usawineimports.com");
 //        customerList.get(6).setCustomerEmail(null);
 //        customerList.get(7).setCustomerEmail("ArthurDent");
 
@@ -374,6 +368,8 @@ public class MainWindowController {
                         Workbook theAttachment = (Workbook) otherAttachment.call(); //TODO: call correct POI here
                         System.out.println("Attachment made");
                         Email theEmail = new Email(emailAddresses, prenotificationFile.getText().toString(), emailSubject, emailMessage);
+//                        String tempFilePathAndName = "src/resources/AttachmentTemplates/temp.xlsx";
+//                        Email theEmail = new Email(emailAddresses, tempFilePathAndName, emailSubject, emailMessage);
                             System.out.println("Send email for " +
                                     theAttachment.getSheetAt(0).getRow(22).getCell(6) + " to " + emailAddresses + " Total:$" +
                                    theAttachment.getSheetAt(0).getRow(22).getCell(7));

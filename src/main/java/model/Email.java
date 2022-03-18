@@ -73,7 +73,7 @@ public class Email implements Callable {
             message.setFrom(sender);
             //This if/else statement checks if email contains semi-colons. If so it breaks apart the String
             //and adds each String as a recipient
-
+            System.out.println("Inside SendTheEmail function");
             if(recipient.contains(";")){
                 String[] listOfRecipients=splitRecipients(recipient);
                 for (String theRecipient : listOfRecipients){
@@ -151,11 +151,11 @@ public class Email implements Callable {
             multipart.addBodyPart(attachmentBodyPart);
 
             message.setContent(multipart);
-            //System.out.println("ALL OTHER EMAIL PARTS SET");
+            System.out.println("ALL OTHER EMAIL PARTS SET");
             try{
-               // System.out.println("TRYING TO SEND EMAIL");
+                System.out.println("TRYING TO SEND EMAIL");
                 Transport.send(message); //freezing thread
-                //System.out.println("EMAIL NOW SENT");
+                System.out.println("EMAIL NOW SENT");
                 return true;
             }catch(SendFailedException e){
                 //this section catches emails that can't be sent (bounce backs) and constructs a new email that is sent
