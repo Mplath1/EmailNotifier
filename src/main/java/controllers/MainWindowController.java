@@ -368,11 +368,10 @@ public class MainWindowController {
                         Workbook theAttachment = (Workbook) otherAttachment.call(); //TODO: call correct POI here
                         System.out.println("Attachment made");
                         Email theEmail = new Email(emailAddresses, prenotificationFile.getText().toString(), emailSubject, emailMessage);
+
 //                        String tempFilePathAndName = "src/resources/AttachmentTemplates/temp.xlsx";
 //                        Email theEmail = new Email(emailAddresses, tempFilePathAndName, emailSubject, emailMessage);
-                            System.out.println("Send email for " +
-                                    theAttachment.getSheetAt(0).getRow(22).getCell(6) + " to " + emailAddresses + " Total:$" +
-                                   theAttachment.getSheetAt(0).getRow(22).getCell(7));
+                        System.out.println("Below printout");
                         success = (boolean) theEmail.call();
                     }else{
                         System.out.println("Adding " + customerList.get(i).getCustomerName() + " to nonsendable");

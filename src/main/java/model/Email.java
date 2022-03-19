@@ -142,9 +142,13 @@ public class Email implements Callable {
             BodyPart attachmentBodyPart = new MimeBodyPart();
             //next lines will select the file to be attached and set attach to the email
             String filename = attachmentName;
-            DataSource source = new FileDataSource(filename);
+//            DataSource source = new FileDataSource(filename);
+//            attachmentBodyPart.setDataHandler(new DataHandler(source));
+//            attachmentBodyPart.setFileName("Prenotification of Pending NYSLA COD Status from USA Wine Imports.xls");
+            String filePath = "src/resources/AttachmentTemplates/temp.xlsx"; //TODO: use dependency injection
+            DataSource source = new FileDataSource(filePath);
             attachmentBodyPart.setDataHandler(new DataHandler(source));
-            attachmentBodyPart.setFileName("Prenotification of Pending NYSLA COD Status from USA Wine Imports.xls");
+            attachmentBodyPart.setFileName("Prenotification of Pending NYSLA COD Status from USA Wine Imports.xlsx");
 
             Multipart multipart = new MimeMultipart();
             multipart.addBodyPart(messageBodyPart);
