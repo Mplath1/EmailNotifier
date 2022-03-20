@@ -17,12 +17,18 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.xmlbeans.impl.schema.FileResourceLoader;
 
 import java.io.*;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static core.Main.appProps;
 
@@ -80,6 +86,7 @@ public class MainWindowController {
         progressLabel.setText("READY");
         progressLabel.setMinWidth(250);
         progressLabel.setAlignment(Pos.CENTER);
+        loadTemplateOptions();
         setBindings();
 
     }
@@ -97,13 +104,30 @@ public class MainWindowController {
         runEverything.disableProperty().bind(runButtonBinding);
         progressLabel.visibleProperty().bind(runEverything.disableProperty().not());
         progressBar.visibleProperty().bind(runEverything.disableProperty().not());
-
-        emailSubjectComboBox.getItems().add("NYSLA Prenotification"); //load default names from resources folder
-        emailSubjectComboBox.getItems().add("Final Notice");
-
-
         emailSubjectComboBox.setEditable(true);
     }
+
+    protected void loadTemplateOptions(){
+        emailSubjectComboBox.getItems().add("NYSLA Prenotification");
+        emailSubjectComboBox.getItems().add("Final Notice");
+
+        //Load All Available Templates
+        ClassLoader loader =  getClass().getClassLoader();
+        URL resource = loader.getResource("AttachmentTemplates");
+        List<File> collect = null;
+        try {
+            collect = Files.walk(Paths.get(resource.toURI())).filter(Files::isRegularFile).map(x -> x.toFile())
+                    .collect(Collectors.toList());
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+        for(File currentFile: collect){
+            emailSubjectComboBox.getItems().add(currentFile.getName());
+        }
+    }
+
 
     @FXML
     protected void listSelect(ActionEvent event) throws IOException {
