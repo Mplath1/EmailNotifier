@@ -21,7 +21,6 @@ import java.util.Scanner;
 public class Main extends Application {
     public static PropertyValues appProps;
     public static ArrayList<String> previouslySentFiles;
-    public static Properties properties;
 
     @Override
     public void start(Stage primaryStage) throws Exception{
@@ -30,15 +29,22 @@ public class Main extends Application {
         String rootFilePath = "src/main/java/views/MainWindow.fxml";
         FileInputStream fxmlStream = new FileInputStream(rootFilePath);
         Parent root = loader.load(fxmlStream);
-        
-        primaryStage.setTitle("Email Notifications");
-        primaryStage.setScene(new Scene(root, 350, 350));
-        primaryStage.show();
-    }
 
-    private void bootstrap() throws IOException {
-        appProps = new PropertyValues("config.properties");
+
         Properties properties = System.getProperties();
+        Session session = Session.getDefaultInstance(properties);
+        InetAddress host;
+        try{
+            host = InetAddress.getLocalHost();
+        }catch(Exception e){
+            System.out.println(e.getCause().toString());
+        }
+        try {
+            appProps.getPropValues();
+            System.out.println(appProps.getProperty("defaultListLoadDirectory"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         String sender = appProps.getProperty("sender");
         String fromAddress = appProps.getProperty("mail.stmp.from");
         String mailHost = appProps.getProperty("mail.stmp.host");
@@ -49,9 +55,22 @@ public class Main extends Application {
         properties.put("mail.smtp.host",mailHost);
         //properties.put("mail.smtp.port", port); //PORT LOADS AS NULL?
         properties.put("mail.smtp.from",fromAddress);
-        Session session = Session.getDefaultInstance(properties);
-        InetAddress host;
-        host = InetAddress.getLocalHost();
+
+
+
+        primaryStage.setTitle("Email Prenotifications");
+        primaryStage.setScene(new Scene(root, 300, 350));
+        primaryStage.show();
+    }
+
+    private void bootstrap() throws IOException {
+        appProps = new PropertyValues("config.properties");
+
+
+
+
+
+
 
 
         previouslySentFiles = loadPreviouslySentFiles();

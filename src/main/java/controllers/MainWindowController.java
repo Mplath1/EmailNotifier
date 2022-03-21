@@ -12,12 +12,10 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
 import javafx.stage.FileChooser;
 import model.*;
-import org.apache.batik.w3c.dom.events.CustomEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.apache.xmlbeans.impl.schema.FileResourceLoader;
 
 import java.io.*;
 import java.net.URISyntaxException;
@@ -32,6 +30,7 @@ import java.util.stream.Collectors;
 
 import static core.Main.appProps;
 import static core.Main.previouslySentFiles;
+import static org.apache.commons.io.FilenameUtils.removeExtension;
 
 public class MainWindowController {
     @FXML
@@ -41,9 +40,11 @@ public class MainWindowController {
     @FXML
     TextField listFile;
     @FXML
-    Button prenotificationSelect;
+    ComboBox attachmentFileComboBox; //TODO:eliminate Button & TextField for attachement and refactor methods
     @FXML
-    TextField prenotificationFile;
+    Button attachmentSelectButton;
+    @FXML
+    TextField attachmentFile;
     @FXML
     ComboBox emailSubjectComboBox;
     @FXML
@@ -63,11 +64,10 @@ public class MainWindowController {
 
     static int noEmailsSent;
     static int noPrinted;
-    ArrayList<String> testNonSendable;
-    ArrayList<Customer> nonSendableCustomers;
+    ArrayList<String> testNonSendable; //may need to make static
+    ArrayList<Customer> nonSendableCustomers; //may need to make static
 
     public void initialize(){
-
         noEmailsSent = 0;
         noPrinted = 0;
         testNonSendable = new ArrayList<>();
@@ -79,7 +79,6 @@ public class MainWindowController {
         progressLabel.setAlignment(Pos.CENTER);
         loadTemplateOptions();
         setBindings();
-
     }
 
     protected void setBindings(){
@@ -88,7 +87,7 @@ public class MainWindowController {
         BooleanBinding runButtonBinding = customMessageButton.selectedProperty()
                 .and(customMessageTextField.textProperty().isEmpty())
                 .or(messageToggleGroup.selectedToggleProperty().isNull())
-                .or(prenotificationFile.textProperty().isEmpty())
+                .or(attachmentFile.textProperty().isEmpty())
                 .or(listFile.textProperty().isEmpty())
                 .or(emailSubjectComboBox.getSelectionModel().selectedItemProperty().isNull());
 
@@ -116,13 +115,14 @@ public class MainWindowController {
             e.printStackTrace();
         }
         for(File currentFile: collect){
-            emailSubjectComboBox.getItems().add(currentFile.getName());
+            emailSubjectComboBox.getItems().add(removeExtension(currentFile.getName()));
+            attachmentFileComboBox.getItems().add(currentFile.getName());
         }
     }
 
 
     @FXML
-    protected void listSelect(ActionEvent event) throws IOException {
+    protected void selectList(ActionEvent event) throws IOException {
         FileChooser fileChooser = new FileChooser();
         FileChooser.ExtensionFilter extensionFilter = new FileChooser.ExtensionFilter("Excel File", "*.xls","*.xlsx");
         fileChooser.getExtensionFilters().add(extensionFilter);
@@ -139,7 +139,7 @@ public class MainWindowController {
     }
 
     @FXML
-    protected void prenotificationSelect(ActionEvent event) throws IOException {
+    protected void selectAttachment(ActionEvent event) throws IOException {
         FileChooser fileChooser = new FileChooser();
         FileChooser.ExtensionFilter extensionFilter = new FileChooser.ExtensionFilter("Excel File", "*.xls","*.xlsx");
         fileChooser.getExtensionFilters().add(extensionFilter);
@@ -149,7 +149,7 @@ public class MainWindowController {
 
         File file = fileChooser.showOpenDialog(grid.getScene().getWindow());
         if (file != null) {
-            prenotificationFile.setText(file.toString());
+            attachmentFile.setText(file.toString());
         } else {
             System.out.println("You must select a file");
         }
@@ -302,9 +302,9 @@ public class MainWindowController {
                         System.out.println(emailAddresses);
                         if(!emailAddresses.equals(null) && !emailAddresses.isEmpty() && emailAddresses.trim().length() != 0) {
 
-                            Attachment otherAttachment = new Attachment(testLines.get(i), prenotificationFile.getText());
+                            Attachment otherAttachment = new Attachment(testLines.get(i), attachmentFile.getText());
                             Workbook theAttachment = (Workbook) otherAttachment.call(); //TODO: call correct POI here
-                            Email theEmail = new Email(emailAddresses, prenotificationFile.getText().toString(), emailSubject, emailMessage);
+                            Email theEmail = new Email(emailAddresses, attachmentFile.getText().toString(), emailSubject, emailMessage);
 //                            System.out.println("Send email for " +
 //                                    theAttachment.getSheetAt(0).getRow(22).getCell(6) + " to " + emailAddresses + " Total:$" +
 //                                    theAttachment.getSheetAt(0).getRow(22).getCell(7));
@@ -378,10 +378,10 @@ public class MainWindowController {
                     System.out.println(customerList.get(i).getCustomerName() + " email is " + customerList.get(i).getCustomerEmail());
                     if(!emailAddresses.equals(null) && !emailAddresses.isEmpty() && emailAddresses.trim().length() != 0) {
 
-                        Attachment otherAttachment = new Attachment(customerList.get(i), prenotificationFile.getText());
+                        Attachment otherAttachment = new Attachment(customerList.get(i), attachmentFile.getText());
                         Workbook theAttachment = (Workbook) otherAttachment.call(); //TODO: call correct POI here
                         System.out.println("Attachment made");
-                        Email theEmail = new Email(emailAddresses, prenotificationFile.getText().toString(), emailSubject, emailMessage);
+                        Email theEmail = new Email(emailAddresses, attachmentFile.getText().toString(), emailSubject, emailMessage);
 
 //                        String tempFilePathAndName = "src/resources/AttachmentTemplates/temp.xlsx";
 //                        Email theEmail = new Email(emailAddresses, tempFilePathAndName, emailSubject, emailMessage);

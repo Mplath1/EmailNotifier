@@ -5,10 +5,11 @@
 <GridPane fx:id="grid" fx:controller="controllers.MainWindowController"
           xmlns:fx="http://javafx.com/fxml" alignment="center" hgap="10" vgap="10">
     <VBox spacing="7">
-        <Button fx:id="listSelect" text="Please select list to send" onAction="#listSelect"/>
+        <Button fx:id="listSelect" text="Select List" onAction="#selectList"/>
         <TextField fx:id="listFile" editable="false"/>
-        <Button fx:id="prenotificationSelect" text="Please select the Prenotification File" onAction="#prenotificationSelect"/>
-        <TextField fx:id="prenotificationFile" editable="false"/>
+        <ComboBox fx:id="attachmentFileComboBox" promptText="Select Attachement"></ComboBox>
+        <Button fx:id="attachmentSelectButton" text="Select Attachement" onAction="#selectAttachment"/>
+        <TextField fx:id="attachmentFile" editable="false"/>
         <ComboBox fx:id="emailSubjectComboBox" promptText="Select Email Subject"></ComboBox>
         <HBox>
             <fx:define>
