@@ -43,8 +43,8 @@ public class MainWindowController {
     ComboBox attachmentFileComboBox; //TODO:eliminate Button & TextField for attachement and refactor methods
     @FXML
     Button attachmentSelectButton;
-    @FXML
-    TextField attachmentFile;
+//    @FXML
+//    TextField attachmentFile;
     @FXML
     ComboBox emailSubjectComboBox;
     @FXML
@@ -87,8 +87,9 @@ public class MainWindowController {
         BooleanBinding runButtonBinding = customMessageButton.selectedProperty()
                 .and(customMessageTextField.textProperty().isEmpty())
                 .or(messageToggleGroup.selectedToggleProperty().isNull())
-                .or(attachmentFile.textProperty().isEmpty())
+                //.or(attachmentFile.textProperty().isEmpty())
                 .or(listFile.textProperty().isEmpty())
+                .or(attachmentFileComboBox.getSelectionModel().selectedItemProperty().isNull())
                 .or(emailSubjectComboBox.getSelectionModel().selectedItemProperty().isNull());
 
         runEverything.disableProperty().bind(runButtonBinding);
@@ -138,21 +139,21 @@ public class MainWindowController {
         }
     }
 
-    @FXML
+    @FXML @Deprecated
     protected void selectAttachment(ActionEvent event) throws IOException {
-        FileChooser fileChooser = new FileChooser();
-        FileChooser.ExtensionFilter extensionFilter = new FileChooser.ExtensionFilter("Excel File", "*.xls","*.xlsx");
-        fileChooser.getExtensionFilters().add(extensionFilter);
-
-        File id = new File(appProps.getProperty("defaultListLoadDirectory"));//SET THIS AS A VARIABLE
-        fileChooser.setInitialDirectory(id);
-
-        File file = fileChooser.showOpenDialog(grid.getScene().getWindow());
-        if (file != null) {
-            attachmentFile.setText(file.toString());
-        } else {
-            System.out.println("You must select a file");
-        }
+//        FileChooser fileChooser = new FileChooser();
+//        FileChooser.ExtensionFilter extensionFilter = new FileChooser.ExtensionFilter("Excel File", "*.xls","*.xlsx");
+//        fileChooser.getExtensionFilters().add(extensionFilter);
+//
+//        File id = new File(appProps.getProperty("defaultListLoadDirectory"));//SET THIS AS A VARIABLE
+//        fileChooser.setInitialDirectory(id);
+//
+//        File file = fileChooser.showOpenDialog(grid.getScene().getWindow());
+//        if (file != null) {
+//            attachmentFile.setText(file.toString());
+//        } else {
+//            System.out.println("You must select a file");
+//        }
     }
 
 
@@ -285,6 +286,7 @@ public class MainWindowController {
         }
     }
 
+    @Deprecated
     public void processList(ArrayList<Line> testLines, String emailSubject, String emailMessage){
         //HashMap<String,String> testDatabaseMap = getDatabaseList(testLines);
         HashMap<String,String> testDatabaseMap = new HashMap<>();
@@ -302,13 +304,13 @@ public class MainWindowController {
                         System.out.println(emailAddresses);
                         if(!emailAddresses.equals(null) && !emailAddresses.isEmpty() && emailAddresses.trim().length() != 0) {
 
-                            Attachment otherAttachment = new Attachment(testLines.get(i), attachmentFile.getText());
-                            Workbook theAttachment = (Workbook) otherAttachment.call(); //TODO: call correct POI here
-                            Email theEmail = new Email(emailAddresses, attachmentFile.getText().toString(), emailSubject, emailMessage);
+                            //Attachment otherAttachment = new Attachment(testLines.get(i), attachmentFile.getText());
+                            //Workbook theAttachment = (Workbook) otherAttachment.call(); //TODO: call correct POI here
+                            //Email theEmail = new Email(emailAddresses, attachmentFile.getText().toString(), emailSubject, emailMessage);
 //                            System.out.println("Send email for " +
 //                                    theAttachment.getSheetAt(0).getRow(22).getCell(6) + " to " + emailAddresses + " Total:$" +
 //                                    theAttachment.getSheetAt(0).getRow(22).getCell(7));
-                            success = (boolean) theEmail.call();
+                            //success = (boolean) theEmail.call();
                         }else{
                            testNonSendable.add(testLines.get(i).getCustomerName());
                         }
@@ -362,7 +364,7 @@ public class MainWindowController {
 
     //TODO: eliminate other processList method
     public void processList2(ArrayList<Customer> customerList, String emailSubject, String emailMessage){
-       customerList.get(5).setCustomerEmail("mplath@usawineimports.com");
+       customerList.get(1).setCustomerEmail("mplath@usawineimports.com");
 //        customerList.get(6).setCustomerEmail(null);
 //        customerList.get(7).setCustomerEmail("ArthurDent");
 
@@ -378,10 +380,12 @@ public class MainWindowController {
                     System.out.println(customerList.get(i).getCustomerName() + " email is " + customerList.get(i).getCustomerEmail());
                     if(!emailAddresses.equals(null) && !emailAddresses.isEmpty() && emailAddresses.trim().length() != 0) {
 
-                        Attachment otherAttachment = new Attachment(customerList.get(i), attachmentFile.getText());
+                        String selectedFileName = attachmentFileComboBox.getSelectionModel().getSelectedItem().toString();
+
+                        Attachment otherAttachment = new Attachment(customerList.get(i), selectedFileName);
                         Workbook theAttachment = (Workbook) otherAttachment.call(); //TODO: call correct POI here
                         System.out.println("Attachment made");
-                        Email theEmail = new Email(emailAddresses, attachmentFile.getText().toString(), emailSubject, emailMessage);
+                        Email theEmail = new Email(emailAddresses, selectedFileName, emailSubject, emailMessage);
 
 //                        String tempFilePathAndName = "src/resources/AttachmentTemplates/temp.xlsx";
 //                        Email theEmail = new Email(emailAddresses, tempFilePathAndName, emailSubject, emailMessage);
@@ -438,7 +442,7 @@ public class MainWindowController {
         new Thread(altTask).start();
     }
 
-    //needs to be part of a class implementing Callable. Or load workbook intially and jsut alter each time.
+    @Deprecated
     public Workbook createAttachement(Line theLine, String theFile) {
         try {
             FileInputStream fis = new FileInputStream(new File(theFile));
@@ -474,6 +478,7 @@ public class MainWindowController {
         return null;
     }
 
+    @Deprecated
     public static ArrayList<Line> loadListToSend(Workbook workbook) {
         ArrayList<Line> theLines = new ArrayList<>();
 
@@ -584,7 +589,7 @@ public class MainWindowController {
     }
 
 
-    //building a list of the customers found on the reportable list //USE CONFIG. IMPLEMENT DAO
+    @Deprecated
     public HashMap<String,String> getDatabaseList(ArrayList<Line> listOfPrenotifications) {
         //throws way too many null pointer exceptions when program runs. possible wholeslaers. research and correct
         String dbConnection = null;
@@ -701,6 +706,4 @@ public class MainWindowController {
             return false;
         }
     }
-
-
 }

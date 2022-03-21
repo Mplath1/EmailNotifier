@@ -25,7 +25,7 @@ public class Email implements Callable {
     String recipient;
     String sender; //static?
     InetAddress host; //static?
-    String attachmentName; //static?
+    String attachmentName; //static? TODO: fix all instances to use the temp file created
     String emailSubject; //pass emailSubject from FXML in constructor. If no emailSubject in FXML use default
     String bodyText; //pass bodytext from FXML in constructor. If no bodytext in FXML use default
 

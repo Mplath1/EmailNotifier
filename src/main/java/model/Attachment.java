@@ -80,8 +80,9 @@ public class Attachment implements Callable {
     //TODO: needs testing, planning for loading of template
     Workbook createAttachment() throws InvalidFormatException {
         try {
-            //File fis = new File("LOAD FROM CONFIG");
-            File fis = new File(theFile);
+            String filePath = "src/resources/AttachmentTemplates/" + theFile;
+            System.out.println("Opening " + filePath);
+            File fis = new File(filePath);
             Workbook attachmentWorkbook = new XSSFWorkbook(fis);
             Sheet currentSheet = attachmentWorkbook.getSheetAt(0);
             int startingRow = 22;
@@ -100,7 +101,7 @@ public class Attachment implements Callable {
             currentCell = currentRow.getCell(4);
             currentCell.setCellValue(currentInvoice.getPortfolioCode());
             currentCell = currentRow.getCell(5);
-            currentCell.setCellValue(customer.getLicenseNumber());
+            currentCell.setCellValue(customer.getLicenseNumber()); //TODO: being set as number instead of text
             currentCell = currentRow.getCell(6);
             currentCell.setCellValue(customer.getCustomerName());
             currentCell = currentRow.getCell(7);
