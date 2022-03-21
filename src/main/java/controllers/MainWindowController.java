@@ -31,6 +31,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static core.Main.appProps;
+import static core.Main.previouslySentFiles;
 
 public class MainWindowController {
     @FXML
@@ -59,16 +60,6 @@ public class MainWindowController {
     Label progressLabel;
     @FXML
     ProgressBar progressBar;
-
-    static ArrayList<String> previouslySentFiles;
-
-    static {
-        try {
-            previouslySentFiles = loadPreviouslySentFiles();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     static int noEmailsSent;
     static int noPrinted;
@@ -107,6 +98,7 @@ public class MainWindowController {
         emailSubjectComboBox.setEditable(true);
     }
 
+    //TODO: should be moved to load templates into PrentoificationFileTextField as well
     protected void loadTemplateOptions(){
         emailSubjectComboBox.getItems().add("NYSLA Prenotification");
         emailSubjectComboBox.getItems().add("Final Notice");
@@ -190,8 +182,6 @@ public class MainWindowController {
             emailMessage = customMessageTextField.getText();
         }
 
-            ///////start of new method
-            //processList(testLines,emailSubject,emailMessage); //TODO:processList must accept Customers instead of Lines
             processList2(customerListToSend,emailSubject,emailMessage);
             ///put into overall cleanup method
             //saveCompletedList();
@@ -712,32 +702,5 @@ public class MainWindowController {
         }
     }
 
-    public static ArrayList<String> loadPreviouslySentFiles() throws IOException {
-        File file = new File("Q:\\Previously Sent Emails\\Previously Sent Emails.txt");//USE CONFIG
-        file = new File(appProps.getProperty("defaultPreviouslySentFilesDirectory")
-                + appProps.getProperty("defaultPreviouslySentFilesPath")
-                + appProps.getProperty("defaultPreviouslySentFilesFile") + ".txt");
-        ArrayList<String> listToReturn = new ArrayList<>();
-        try(Scanner scanner = new Scanner(new FileReader(file))){
-            //need to loop through and read each String before returning array of Strings
-            while(scanner.hasNextLine()){
-                String currentLine = scanner.nextLine();
-                listToReturn.add(currentLine);
-                // System.out.println(currentLine + " was loaded into program");
-//                String[]currentLineBreakdown = currentLine.split(",");
-//                listToReturn.add(currentLineBreakdown[0]);
-//                listToReturn.add(currentLineBreakdown[1]);
-            }
-            if (listToReturn.size()>35){
-                listToReturn.remove(0);
-//              listToReturn.remove(0);
-            }
 
-            return listToReturn;
-
-        }catch (IOException e){
-            return listToReturn;
-
-        }
-    }
 }

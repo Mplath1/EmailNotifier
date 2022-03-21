@@ -108,8 +108,8 @@ public class Attachment implements Callable {
             startingRow++;
             }
             String tempOutFile = "src/resources/AttachmentTemplates";
-            FileOutputStream fileout = new FileOutputStream(new File(tempOutFile + "/temp.xlsx")); //writes correctly but freeses
-            attachmentWorkbook.write(fileout); //crashes here with EOF Exception and corrupts xslx file
+            FileOutputStream fileout = new FileOutputStream(new File(tempOutFile + "/temp.xlsx"));
+            attachmentWorkbook.write(fileout);
             System.out.println("Temp file written...");
             attachmentWorkbook.close();
             System.out.println("...and closed");
