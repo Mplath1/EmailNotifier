@@ -77,7 +77,7 @@ public class Attachment implements Callable {
         return null;
     }
 
-    //TODO: needs testing, planning for loading of template
+    //TODO: possible rewrite to return File instead of Workbook
     Workbook createAttachment() throws InvalidFormatException {
         try {
             String filePath = "src/resources/AttachmentTemplates/" + theFile;

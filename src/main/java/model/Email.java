@@ -8,6 +8,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.util.ArrayList;
@@ -26,6 +27,7 @@ public class Email implements Callable {
     String sender; //static?
     InetAddress host; //static?
     String attachmentName; //static? TODO: fix all instances to use the temp file created
+    File attachentFile;
     String emailSubject; //pass emailSubject from FXML in constructor. If no emailSubject in FXML use default
     String bodyText; //pass bodytext from FXML in constructor. If no bodytext in FXML use default
 
@@ -60,6 +62,10 @@ public class Email implements Callable {
         //properties.put("mail.smtp.port", port); //PORT LOADS AS NULL?
         properties.put("mail.smtp.from",fromAddress);
 
+    }
+
+    public void setAttachentFile(File attachentFile) {
+        this.attachentFile = attachentFile;
     }
 
     @Override

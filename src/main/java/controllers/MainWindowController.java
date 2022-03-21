@@ -383,13 +383,12 @@ public class MainWindowController {
                         String selectedFileName = attachmentFileComboBox.getSelectionModel().getSelectedItem().toString();
 
                         Attachment otherAttachment = new Attachment(customerList.get(i), selectedFileName);
-                        Workbook theAttachment = (Workbook) otherAttachment.call(); //TODO: call correct POI here
+                        Workbook theAttachment = (Workbook) otherAttachment.call(); //TODO:set this into email
                         System.out.println("Attachment made");
                         Email theEmail = new Email(emailAddresses, selectedFileName, emailSubject, emailMessage);
 
 //                        String tempFilePathAndName = "src/resources/AttachmentTemplates/temp.xlsx";
 //                        Email theEmail = new Email(emailAddresses, tempFilePathAndName, emailSubject, emailMessage);
-                        System.out.println("Below printout");
                         success = (boolean) theEmail.call();
                     }else{
                         System.out.println("Adding " + customerList.get(i).getCustomerName() + " to nonsendable");
@@ -403,7 +402,6 @@ public class MainWindowController {
                         noPrinted++;
                         message += "Unable to send for:" + customerList.get(i).getCustomerName();
                     }
-                    System.out.println("After success block");
                     message += "\n" + i + "/" + customerList.size();
 
                     System.out.println(i + "/" + customerList.size() +"\t" + success + "\n");
@@ -412,6 +410,8 @@ public class MainWindowController {
 
                     Thread.sleep(100);
                 }
+                updateProgress(1,1);
+                updateMessage("COMPLETE");
                 return null;
             }
         };
