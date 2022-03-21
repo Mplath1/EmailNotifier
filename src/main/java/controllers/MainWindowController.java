@@ -40,9 +40,9 @@ public class MainWindowController {
     @FXML
     TextField listFile;
     @FXML
-    ComboBox attachmentFileComboBox; //TODO:eliminate Button & TextField for attachement and refactor methods
-    @FXML
-    Button attachmentSelectButton;
+    ComboBox attachmentFileComboBox;
+//    @FXML
+//    Button attachmentSelectButton;
 //    @FXML
 //    TextField attachmentFile;
     @FXML
@@ -98,7 +98,6 @@ public class MainWindowController {
         emailSubjectComboBox.setEditable(true);
     }
 
-    //TODO: should be moved to load templates into PrentoificationFileTextField as well
     protected void loadTemplateOptions(){
         emailSubjectComboBox.getItems().add("NYSLA Prenotification");
         emailSubjectComboBox.getItems().add("Final Notice");
@@ -229,6 +228,9 @@ public class MainWindowController {
         alert.setHeaderText("Results");
         alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
         alert.setContentText(fullMessage);
+        double parentWindowTopRightCorner = grid.getScene().getWindow().getX() + grid.getScene().getWindow().getWidth();
+        alert.setX(parentWindowTopRightCorner + 100);
+        alert.setResizable(true);
         alert.showAndWait();
     }
 
@@ -664,6 +666,7 @@ public class MainWindowController {
         return null;
     }
 
+    //TODO:save as binary and update associated methods. relocate file to resources
     public static boolean savePreviouslySentFiles() throws IOException {
         File dir = new File("Q:\\Previously Sent Emails"); //USE CONFIG
         dir = new File(appProps.getProperty("defaultPreviouslySentFilesDirectory")

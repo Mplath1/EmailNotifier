@@ -3,6 +3,7 @@ package model;
 /**
  * Created by Michael Plath on 2/22/2018.
  */
+@Deprecated
 public class Line {
     String orderNumber;
     String deliveryDate;
