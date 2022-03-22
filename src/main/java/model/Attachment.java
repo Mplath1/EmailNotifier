@@ -33,13 +33,14 @@ public class Attachment implements Callable {
 
     @Override
     public Object call() throws Exception {
+        File outputFile = null;
         try {
             //theWorkbook = createAttachment(theLine,theFile);
-            createAttachment();
+            outputFile = createAttachment();
         } catch(Exception e){
             e.printStackTrace();
         }
-        return theWorkbook;
+        return outputFile;
     }
 
     Workbook createAttachment(Line theLine, String theFile) {
@@ -78,7 +79,7 @@ public class Attachment implements Callable {
     }
 
     //TODO: possible rewrite to return File instead of Workbook
-    Workbook createAttachment() throws InvalidFormatException {
+    File createAttachment() throws InvalidFormatException {
         try {
             String filePath = "src/resources/AttachmentTemplates/" + theFile;
             System.out.println("Opening " + filePath);
@@ -109,7 +110,8 @@ public class Attachment implements Callable {
             startingRow++;
             }
             String tempOutFile = "src/resources/AttachmentTemplates";
-            FileOutputStream fileout = new FileOutputStream(new File(tempOutFile + "/temp.xlsx"));
+            File outputFile = new File(tempOutFile + "/temp.xlsx");
+            FileOutputStream fileout = new FileOutputStream(outputFile);
             attachmentWorkbook.write(fileout);
             System.out.println("Temp file written...");
             attachmentWorkbook.close();
@@ -117,7 +119,7 @@ public class Attachment implements Callable {
             fileout.close();
             System.out.println("Template closed");
 
-            return attachmentWorkbook;
+            return outputFile;
         } catch (IOException e) {
             e.printStackTrace();
         }

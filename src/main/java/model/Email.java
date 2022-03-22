@@ -26,7 +26,7 @@ public class Email implements Callable {
     String recipient;
     String sender; //static?
     InetAddress host; //static?
-    String attachmentName; //static? TODO: fix all instances to use the temp file created
+    String attachmentName; //static? TODO: remove and use attachmentFile instead
     File attachentFile;
     String emailSubject; //pass emailSubject from FXML in constructor. If no emailSubject in FXML use default
     String bodyText; //pass bodytext from FXML in constructor. If no bodytext in FXML use default
@@ -94,10 +94,11 @@ public class Email implements Callable {
                         invalidBodyPart.setText("Unable to send message to " + theRecipient.toString());
                         BodyPart invalidAttachment = new MimeBodyPart();
                         MimeMultipart invalidMultiPart = new MimeMultipart();
-                        String filename = attachmentName;
-                        DataSource source = new FileDataSource(filename);
+//                        String filename = attachmentName;
+//                        DataSource source = new FileDataSource(filename);
+                        DataSource source = new FileDataSource(attachentFile);
                         invalidAttachment.setDataHandler(new DataHandler(source));
-                        invalidAttachment.setFileName("Prenotification of Pending NYSLA COD Status from USA Wine Imports.xls");
+                        invalidAttachment.setFileName(attachmentName);
 
                         invalidMultiPart.addBodyPart(invalidBodyPart);
                         invalidMultiPart.addBodyPart(invalidAttachment);
@@ -118,15 +119,16 @@ public class Email implements Callable {
                     MimeMessage invalid = new MimeMessage(session);
                     invalid.setFrom("mplath@usawineimports.com");
                     invalid.addRecipient(Message.RecipientType.TO,new InternetAddress("mplath@usawineimports.com"));
-                    invalid.setSubject("Undeliverable: Prenotification of Pending NYSLA COD Status from USA Wine Imports");
+                    invalid.setSubject("Undeliverable: " + emailSubject);
                     BodyPart invalidBodyPart = new MimeBodyPart();
                     invalidBodyPart.setText("Unable to send message to " + recipient);
                     BodyPart invalidAttachment = new MimeBodyPart();
                     MimeMultipart invalidMultiPart = new MimeMultipart();
-                    String filename = attachmentName;
-                    DataSource source = new FileDataSource(filename);
+//                    String filename = attachmentName;
+//                    DataSource source = new FileDataSource(filename);
+                    DataSource source = new FileDataSource(attachentFile);
                     invalidAttachment.setDataHandler(new DataHandler(source));
-                    invalidAttachment.setFileName("Prenotification of Pending NYSLA COD Status from USA Wine Imports.xls");
+                    invalidAttachment.setFileName(attachmentName);
 
                     invalidMultiPart.addBodyPart(invalidBodyPart);
                     invalidMultiPart.addBodyPart(invalidAttachment);
@@ -152,9 +154,10 @@ public class Email implements Callable {
 //            attachmentBodyPart.setDataHandler(new DataHandler(source));
 //            attachmentBodyPart.setFileName("Prenotification of Pending NYSLA COD Status from USA Wine Imports.xls");
             String filePath = "src/resources/AttachmentTemplates/temp.xlsx"; //TODO: use dependency injection
-            DataSource source = new FileDataSource(filePath);
+//            DataSource source = new FileDataSource(filePath);
+            DataSource source = new FileDataSource(attachentFile);
             attachmentBodyPart.setDataHandler(new DataHandler(source));
-            attachmentBodyPart.setFileName("Prenotification of Pending NYSLA COD Status from USA Wine Imports.xlsx");
+            attachmentBodyPart.setFileName(filename);
 
             Multipart multipart = new MimeMultipart();
             multipart.addBodyPart(messageBodyPart);
@@ -163,7 +166,7 @@ public class Email implements Callable {
             message.setContent(multipart);
             System.out.println("ALL OTHER EMAIL PARTS SET");
             try{
-                System.out.println("TRYING TO SEND EMAIL");
+                System.out.println("TRYING TO SEND EMAIL WITH ATTACHMENT:" + source.getName() + " SENT AS " + filename);
                 Transport.send(message); //freezing thread
                 System.out.println("EMAIL NOW SENT");
                 return true;
@@ -174,13 +177,13 @@ public class Email implements Callable {
                 MimeMessage invalid = new MimeMessage(session);
                 invalid.setFrom("mplath@usawineimports.com");
                 invalid.addRecipient(Message.RecipientType.TO,new InternetAddress("mplath@usawineimports.com"));
-                invalid.setSubject("Undeliverable: Prenotification of Pending NYSLA COD Status from USA Wine Imports");
+                invalid.setSubject("Undeliverable: " + emailSubject);
                 BodyPart invalidBodyPart = new MimeBodyPart();
                 invalidBodyPart.setText("Unable to send message to one or more addresses");
                 BodyPart invalidAttachment = new MimeBodyPart();
                 MimeMultipart invalidMultiPart = new MimeMultipart();
                 invalidAttachment.setDataHandler(new DataHandler(source));
-                invalidAttachment.setFileName("Prenotification of Pending NYSLA COD Status from USA Wine Imports.xls");
+                invalidAttachment.setFileName(attachmentName);
 
                 invalidMultiPart.addBodyPart(invalidBodyPart);
                 invalidMultiPart.addBodyPart(invalidAttachment);

@@ -367,6 +367,7 @@ public class MainWindowController {
     //TODO: eliminate other processList method
     public void processList2(ArrayList<Customer> customerList, String emailSubject, String emailMessage){
        customerList.get(1).setCustomerEmail("mplath@usawineimports.com");
+       customerList.get(9).setCustomerEmail("map30269@yahoo.com");
 //        customerList.get(6).setCustomerEmail(null);
 //        customerList.get(7).setCustomerEmail("ArthurDent");
 
@@ -385,10 +386,10 @@ public class MainWindowController {
                         String selectedFileName = attachmentFileComboBox.getSelectionModel().getSelectedItem().toString();
 
                         Attachment otherAttachment = new Attachment(customerList.get(i), selectedFileName);
-                        Workbook theAttachment = (Workbook) otherAttachment.call(); //TODO:set this into email
-                        System.out.println("Attachment made");
+                        File fileAttachment = (File) otherAttachment.call(); //TODO:set this into email
+                        System.out.println("Attachment made : " + fileAttachment.getName());
                         Email theEmail = new Email(emailAddresses, selectedFileName, emailSubject, emailMessage);
-
+                        theEmail.setAttachentFile(fileAttachment);
 //                        String tempFilePathAndName = "src/resources/AttachmentTemplates/temp.xlsx";
 //                        Email theEmail = new Email(emailAddresses, tempFilePathAndName, emailSubject, emailMessage);
                         success = (boolean) theEmail.call();
@@ -414,6 +415,8 @@ public class MainWindowController {
                 }
                 updateProgress(1,1);
                 updateMessage("COMPLETE");
+                //delete Temp file no matter what here
+                Files.deleteIfExists(Paths.get("src/resources/AttachmentTemplates/temp.xlsx"));
                 return null;
             }
         };
