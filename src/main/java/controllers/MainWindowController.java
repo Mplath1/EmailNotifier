@@ -234,45 +234,54 @@ public class MainWindowController {
         alert.showAndWait();
     }
 
-    //IN PROGRESS Must wait for processList to complete
+    //IN PROGRESS can update but issues with output
     public void updateOriginalFile() throws IOException {
-        Workbook wb = null;
-        System.out.println("Now running updateOriginalFile method");
-        try {
-            wb = WorkbookFactory.create(new File(listFile.getText()));
-            System.out.println(listFile.getText() + " loaded as " + wb.getSpreadsheetVersion().toString());
-        } catch (IOException e) {
-            e.printStackTrace();
+
+        List<String> nonSendableLicenses = new ArrayList<>();
+        for(Customer currentCustomer: nonSendableCustomers){
+            System.out.println(currentCustomer.getLicenseNumber());
+            nonSendableLicenses.add(currentCustomer.getLicenseNumber());
         }
 
-        Sheet sheet = wb.getSheetAt(0);
-        Iterator<Row> rowIterator = sheet.rowIterator();
-        while(rowIterator.hasNext()){
-            Row currentRow = rowIterator.next();
-            while(currentRow != null) {
-                Cell licenseCell = currentRow.getCell(5);
-                Cell customerNameCell = currentRow.getCell(6);
-                //check unsent list otherwise mark as SENT
-                Cell notesCell = currentRow.getCell(8);
-                //notesCell interpreted as null?
-                Cell deliveryDateCell = currentRow.getCell(1);
-                deliveryDateCell.setCellValue("1/1/2022");
-//                if(!testNonSendable.contains(customerNameCell.toString())) {
-//                    notesCell.setCellValue("SENT");
-//                }else {
-//                    notesCell.setCellValue("UNABLE TO SEND TO 1 OR MORE ADDRESSES");
-//                }
-            }
-           // wb.close();
-        }
-        OutputStream fileToOverwrite = new FileOutputStream(listFile.getText());
+
+        Workbook wb = null;
+        File fileToOverwrite = new File(listFile.getText());
+        FileInputStream fileInputStream = null;
+        FileOutputStream fileOutputStream = null;
         try {
-            wb.write(fileToOverwrite);
+            fileInputStream = new FileInputStream(fileToOverwrite);
+            wb = WorkbookFactory.create(fileInputStream);
+
+            System.out.println(listFile.getText() + " loaded as " + wb.getSpreadsheetVersion().toString());
+
+            Sheet sheet = wb.getSheetAt(0);
+            Iterator<Row> rowIterator = sheet.rowIterator();
+            while(rowIterator.hasNext()) {
+                Row currentRow = rowIterator.next();
+                if (currentRow != null) {
+                    Cell licenseCell = currentRow.getCell(5);
+                    Cell customerNameCell = currentRow.getCell(6);
+                    currentRow.createCell(8);
+                    Cell notesCell = currentRow.getCell(8);
+                  if(!nonSendableLicenses.contains(licenseCell.toString())) {
+                      notesCell.setCellValue("SENT");
+                  }else{
+                      notesCell.setCellValue("UNABLE TO SEND TO 1 OR MORE ADDRESSES");
+                  }
+                }
+            }
+
+            fileInputStream.close();
+           String someOtherFile = "C:\\Users\\Michael\\Downloads\\outputFile.xlsx";
+            fileOutputStream = new FileOutputStream(someOtherFile); //IO Exception here
+            wb.write(fileOutputStream);
         } catch (IOException e) {
             e.printStackTrace();
         }finally {
-            fileToOverwrite.close();
+            wb.close();
+            fileOutputStream.close();
         }
+        System.out.println("DONE!");
 
     }
 
@@ -364,10 +373,10 @@ public class MainWindowController {
         }
 
 
-    //TODO: eliminate other processList method
+    //TODO: eliminate other processList method. possibly pass a callback
     public void processList2(ArrayList<Customer> customerList, String emailSubject, String emailMessage){
-       customerList.get(1).setCustomerEmail("mplath@usawineimports.com");
-       customerList.get(9).setCustomerEmail("map30269@yahoo.com");
+//       customerList.get(1).setCustomerEmail("mplath@usawineimports.com");
+//       customerList.get(9).setCustomerEmail("map30269@yahoo.com");
 //        customerList.get(6).setCustomerEmail(null);
 //        customerList.get(7).setCustomerEmail("ArthurDent");
 
@@ -415,8 +424,8 @@ public class MainWindowController {
                 }
                 updateProgress(1,1);
                 updateMessage("COMPLETE");
-                //delete Temp file no matter what here
-                Files.deleteIfExists(Paths.get("src/resources/AttachmentTemplates/temp.xlsx"));
+                //delete Temp file no matter what. Possibly move to cleanUp method
+                boolean tempFileDeleted = Files.deleteIfExists(Paths.get("src/resources/AttachmentTemplates/temp.xlsx"));
                 return null;
             }
         };
@@ -430,6 +439,7 @@ public class MainWindowController {
                 displayCompletionReport();
                 try {
                     saveCompletedList();
+                    //updateOriginalFile();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
