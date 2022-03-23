@@ -2,6 +2,7 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.web.HTMLEditor?>
 <GridPane fx:id="grid" fx:controller="controllers.MainWindowController"
           xmlns:fx="http://javafx.com/fxml" alignment="center" hgap="10" vgap="10">
     <VBox spacing="7">
@@ -18,7 +19,7 @@
             <RadioButton fx:id="defaultMessageButton" text="Default Message" toggleGroup="$messageToggleGroup"></RadioButton>
             <RadioButton fx:id="customMessageButton" text="Custom Message" toggleGroup="$messageToggleGroup"></RadioButton>
         </HBox>
-        <TextField fx:id="customMessageTextField" editable="false"></TextField>
+        <TextArea fx:id="customMessageTextArea" editable="false" prefHeight="100" wrapText="true"></TextArea>
         <Button fx:id="runEverything" text="Do the Things..." onAction="#doEverything"/>
         <Label fx:id="progressLabel"/>
         <ProgressBar fx:id="progressBar"/>

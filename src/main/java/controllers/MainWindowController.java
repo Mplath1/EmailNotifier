@@ -54,7 +54,7 @@ public class MainWindowController {
     @FXML
     RadioButton customMessageButton;
     @FXML
-    TextField customMessageTextField;
+    TextArea customMessageTextArea;
     @FXML
     Button runEverything;
     @FXML
@@ -82,10 +82,10 @@ public class MainWindowController {
     }
 
     protected void setBindings(){
-        customMessageButton.selectedProperty().bindBidirectional(customMessageTextField.visibleProperty());
-        customMessageButton.selectedProperty().bindBidirectional(customMessageTextField.editableProperty());
+        customMessageButton.selectedProperty().bindBidirectional(customMessageTextArea.visibleProperty());
+        customMessageButton.selectedProperty().bindBidirectional(customMessageTextArea.editableProperty());
         BooleanBinding runButtonBinding = customMessageButton.selectedProperty()
-                .and(customMessageTextField.textProperty().isEmpty())
+                .and(customMessageTextArea.textProperty().isEmpty())
                 .or(messageToggleGroup.selectedToggleProperty().isNull())
                 //.or(attachmentFile.textProperty().isEmpty())
                 .or(listFile.textProperty().isEmpty())
@@ -176,16 +176,14 @@ public class MainWindowController {
 
         String emailSubject = String.valueOf(emailSubjectComboBox.getSelectionModel().getSelectedItem());
         String emailMessage;
-        if(customMessageTextField.getText().isEmpty()){
+        if(customMessageTextArea.getText().isEmpty()){
             emailMessage = appProps.getProperty("bodyText");
         }else{
-            emailMessage = customMessageTextField.getText();
+            emailMessage = customMessageTextArea.getText();
         }
-
             processList2(customerListToSend,emailSubject,emailMessage);
-            ///put into overall cleanup method
-            //saveCompletedList();
-            //updateOriginalFile(); //sync? must wait for process list to complete before running
+            ///put tasks after process into overall cleanup method
+
         };
 
 
