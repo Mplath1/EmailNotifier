@@ -55,7 +55,7 @@ public class PropertyValues {
         String property = "";
         try{
             URL otherFileName = getClass().getClassLoader().getResource("config.properties");
-            inputStream = getClass().getResourceAsStream("/config.properties"); //JAR CAN"T FIND CONFIG FILE?
+            inputStream = getClass().getResourceAsStream("/config.properties");
 
             if(inputStream != null){
                 properties.load(inputStream);

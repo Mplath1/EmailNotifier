@@ -28,8 +28,9 @@ public class Main extends Application {
         rootFilePath = "src/resources/views/MainWindow.fxml";
         //rootFilePath = "target/classes/views/MainWindow.fxml";
         URL otherView = getClass().getResource("/views/MainWindow.fxml");
-        FileInputStream fxmlStream = new FileInputStream(String.valueOf(otherView.getFile()));  //JAR CAN"T FIND FXML FILE?
-        Parent root = loader.load(fxmlStream);
+        InputStream is = getClass().getResourceAsStream("/views/MainWindow.fxml");
+       // FileInputStream fxmlStream = (FileInputStream) is;
+        Parent root = loader.load(otherView); //LOAD EXCEPTIONS WITH JAR
 
 
         Properties properties = System.getProperties();
