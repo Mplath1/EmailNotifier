@@ -27,7 +27,7 @@ public class Main extends Application {
         bootstrap();
         FXMLLoader loader = new FXMLLoader();
         String rootFilePath = "src/main/java/views/MainWindow.fxml";
-        FileInputStream fxmlStream = new FileInputStream(rootFilePath);
+        FileInputStream fxmlStream = new FileInputStream(rootFilePath);  //JAR CAN"T FIND FXML FILE?
         Parent root = loader.load(fxmlStream);
 
 
