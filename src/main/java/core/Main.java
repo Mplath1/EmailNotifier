@@ -8,11 +8,9 @@ import javafx.stage.Stage;
 
 import javax.mail.Session;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.net.InetAddress;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Properties;
 import java.util.Scanner;
@@ -27,7 +25,10 @@ public class Main extends Application {
         bootstrap();
         FXMLLoader loader = new FXMLLoader();
         String rootFilePath = "src/main/java/views/MainWindow.fxml";
-        FileInputStream fxmlStream = new FileInputStream(rootFilePath);  //JAR CAN"T FIND FXML FILE?
+        rootFilePath = "src/resources/views/MainWindow.fxml";
+        //rootFilePath = "target/classes/views/MainWindow.fxml";
+        URL otherView = getClass().getResource("/views/MainWindow.fxml");
+        FileInputStream fxmlStream = new FileInputStream(String.valueOf(otherView.getFile()));  //JAR CAN"T FIND FXML FILE?
         Parent root = loader.load(fxmlStream);
 
 

@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.Date;
 import java.util.Properties;
 
@@ -31,7 +32,8 @@ public class PropertyValues {
         try{
             Properties properties = new Properties();
             String propertiesFileName = "resources/config.properties";
-            inputStream = new FileInputStream(propertiesFileName);
+            URL otherFileName = getClass().getClassLoader().getResource("/config.properties");
+            inputStream = new FileInputStream(String.valueOf(otherFileName.getFile()));
             //inputStream.getClass().getClassLoader().getResourceAsStream(propertiesFileName);
 
             if(inputStream != null){
@@ -52,7 +54,8 @@ public class PropertyValues {
     public String getProperty(String propertyName) throws IOException {
         String property = "";
         try{
-            inputStream = getClass().getClassLoader().getResourceAsStream(propertiesFileName);
+            URL otherFileName = getClass().getClassLoader().getResource("config.properties");
+            inputStream = getClass().getResourceAsStream("/config.properties"); //JAR CAN"T FIND CONFIG FILE?
 
             if(inputStream != null){
                 properties.load(inputStream);
