@@ -1,9 +1,11 @@
 package core;
 
+import controllers.MainWindowController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
 import javax.mail.Session;
@@ -27,10 +29,15 @@ public class Main extends Application {
         String rootFilePath = "src/main/java/views/MainWindow.fxml";
         rootFilePath = "src/resources/views/MainWindow.fxml";
         //rootFilePath = "target/classes/views/MainWindow.fxml";
-        URL otherView = getClass().getResource("/views/MainWindow.fxml");
-        InputStream is = getClass().getResourceAsStream("/views/MainWindow.fxml");
+        URL otherView = getClass().getClassLoader().getResource("views/MainWindow.fxml");
+        InputStream is = getClass().getClassLoader().getResourceAsStream("/views/MainWindow.fxml");
        // FileInputStream fxmlStream = (FileInputStream) is;
-        Parent root = loader.load(otherView); //LOAD EXCEPTIONS WITH JAR
+        loader.setLocation(otherView);
+        //loader.setController(new MainWindowController());
+        //loader.setRoot(otherView.getFile());
+        //System.out.println(loader.getRoot().toString());
+        System.out.println("OtherView Loaded as =" + loader.getLocation());
+        Parent root = loader.load(); //LOAD EXCEPTIONS WITH JAR. LOADER IS SET but PROBLEMS SETTING THIS PARENT
 
 
         Properties properties = System.getProperties();
