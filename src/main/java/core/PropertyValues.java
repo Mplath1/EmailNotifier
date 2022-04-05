@@ -8,6 +8,8 @@ import java.net.URL;
 import java.util.Date;
 import java.util.Properties;
 
+import static core.Main.appProps;
+
 public class PropertyValues {
 
 

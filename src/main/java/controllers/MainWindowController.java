@@ -18,8 +18,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.*;
-import java.net.URISyntaxException;
-import java.net.URL;
+import java.net.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.*;
@@ -67,7 +66,7 @@ public class MainWindowController {
     ArrayList<String> testNonSendable; //may need to make static
     ArrayList<Customer> nonSendableCustomers; //may need to make static
 
-    public void initialize(){
+    public void initialize() throws IOException {
         noEmailsSent = 0;
         noPrinted = 0;
         testNonSendable = new ArrayList<>();
@@ -98,20 +97,21 @@ public class MainWindowController {
         emailSubjectComboBox.setEditable(true);
     }
 
-    protected void loadTemplateOptions(){
+    protected void loadTemplateOptions() throws IOException {
         emailSubjectComboBox.getItems().add("NYSLA Prenotification");
         emailSubjectComboBox.getItems().add("Final Notice");
 
         //Load All Available Templates
-        ClassLoader loader =  getClass().getClassLoader();
-        URL resource = loader.getResource("AttachmentTemplates");
+        //ClassLoader loader =  getClass().getClassLoader();
+        //URL resource = loader.getResource("AttachmentTemplates");
+        String attachmentDirectoryPath = appProps.getProperty("defaultAttachmentTemplateDirectory");
+        //TODO: correct config file
+
         List<File> collect = null;
         try {
-            collect = Files.walk(Paths.get(resource.toURI())).filter(Files::isRegularFile).map(x -> x.toFile())
+            collect = Files.walk(Paths.get(attachmentDirectoryPath)).filter(Files::isRegularFile).map(x -> x.toFile())
                     .collect(Collectors.toList());
         } catch (IOException e) {
-            e.printStackTrace();
-        } catch (URISyntaxException e) {
             e.printStackTrace();
         }
         for(File currentFile: collect){
@@ -170,8 +170,7 @@ public class MainWindowController {
             System.err.println("Unable to load selected file:" + listFile.getText());
         }
 
-        ArrayList<Line> testLines = loadListToSend(wb);
-        ArrayList<Customer> customerListToSend = loadListToSend2(wb); //TODO: eliminate Line class and use this
+        ArrayList<Customer> customerListToSend = loadListToSend2(wb);
 
 
         String emailSubject = String.valueOf(emailSubjectComboBox.getSelectionModel().getSelectedItem());

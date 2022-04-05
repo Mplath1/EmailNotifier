@@ -30,16 +30,18 @@ public class Main extends Application {
         rootFilePath = "src/resources/views/MainWindow.fxml";
         //rootFilePath = "target/classes/views/MainWindow.fxml";
         URL otherView = getClass().getClassLoader().getResource("views/MainWindow.fxml");
-        InputStream is = getClass().getClassLoader().getResourceAsStream("/views/MainWindow.fxml");
+        //InputStream is = getClass().getClassLoader().getResourceAsStream("/views/MainWindow.fxml");
        // FileInputStream fxmlStream = (FileInputStream) is;
+        MainWindowController controller = new MainWindowController();
+        loader.setController(controller);
         loader.setLocation(otherView);
-        //loader.setController(new MainWindowController());
         //loader.setRoot(otherView.getFile());
         //System.out.println(loader.getRoot().toString());
         System.out.println("OtherView Loaded as =" + loader.getLocation());
-        Parent root = loader.load(); //LOAD EXCEPTIONS WITH JAR. LOADER IS SET but PROBLEMS SETTING THIS PARENT
+        System.out.println("Let's go...");
+        Parent root = loader.load();
 
-
+        System.out.println("It worked!");
         Properties properties = System.getProperties();
         Session session = Session.getDefaultInstance(properties);
         InetAddress host;
@@ -76,7 +78,8 @@ public class Main extends Application {
         appProps = new PropertyValues("config.properties");
 
 
-
+        //String attachmentDirectoryPath = appProps.getProperty("defaultAttachmentTemplateDirectory");
+        //TODO:: load config.properties from outside path and not include with JAR
 
 
 
