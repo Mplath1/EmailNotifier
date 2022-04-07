@@ -1,7 +1,11 @@
 package model;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
@@ -11,6 +15,7 @@ public class Customer {
     private String licenseNumber;
     private String customerName;
     private String customerEmail; //TODO: implement customerEmailListMap<address, boolean(sent)> and later portfolio/salesRepEmailList
+    private Map<String,Boolean> emailAddressMap;
     private List<Invoice> invoiceList;
 
     public Customer(String licenseNumber, String customerName, String customerEmail) {
@@ -29,6 +34,7 @@ public class Customer {
         this.licenseNumber = licenseNumber;
         this.customerName = customerName;
         invoiceList = new ArrayList<>();
+        emailAddressMap = new HashMap<>();
     }
 
     public String getLicenseNumber() {
@@ -43,15 +49,26 @@ public class Customer {
         return customerName;
     }
 
-    //TODO: validate and clean email address when setting
-    public void setCustomerEmail(String customerEmail) {
-        boolean valid = validateEmail(customerEmail);
-        if(valid){
-            this.customerEmail = customerEmail;
-            System.out.println("Valid Email!");
-        }else{
-            System.out.println("Invalid Email!");
+    public void setCustomerEmail(String emailAddressString) {
+        String splitEmailAddress[] = splitEmailAddresses(emailAddressString);
+        if(splitEmailAddress != null) {
+            for (String current : splitEmailAddress) {
+                boolean valid = validateEmail(current);
+                if (valid) {
+                    this.customerEmail = current; //TODO: implement when Map is implemented.
+                    System.out.println("Valid Email!");
+                    emailAddressMap.put(current, false);
+                } else {
+                    System.out.println("Invalid Email!");
+                }
+            }
+            this.customerEmail = emailAddressString;
         }
+    }
+
+    private String[] splitEmailAddresses(String emailAddressString){
+        String emailDelimiter = ";";
+        return StringUtils.split(emailAddressString,emailDelimiter);
     }
 
     public boolean addInvoice(Invoice invoice){
