@@ -90,6 +90,7 @@ public class Attachment implements Callable {
 
             for (int i = 0; i < customer.getInvoiceList().size(); i++) {
             Invoice currentInvoice = customer.getInvoiceList().get(i);
+            currentRow = currentSheet.getRow(startingRow);
             Cell currentCell = currentRow.getCell(0);
             currentCell.setCellValue(currentInvoice.getOrderNumber());
             currentCell = currentRow.getCell(1);
@@ -107,8 +108,7 @@ public class Attachment implements Callable {
             currentCell = currentRow.getCell(7);
             currentCell.setCellValue("$" + currentInvoice.getDollarValue());
             startingRow++;
-            }
-
+            };
             //TODO: seperate into new private method
             String tempOutFile = "src/resources/AttachmentTemplates";
             File outputFile = new File(tempOutFile + "/temp.xlsx");
