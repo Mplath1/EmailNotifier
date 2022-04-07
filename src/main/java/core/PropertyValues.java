@@ -1,9 +1,6 @@
 package core;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URL;
 import java.util.Date;
 import java.util.Properties;
@@ -56,8 +53,10 @@ public class PropertyValues {
     public String getProperty(String propertyName) throws IOException {
         String property = "";
         try{
+            String propertiesdirectoryPath = "src/resources/config.properties";
             URL otherFileName = getClass().getClassLoader().getResource("config.properties");
-            inputStream = getClass().getResourceAsStream("/config.properties");
+            //inputStream = getClass().getResourceAsStream("/config.properties"); //works but makes config file uneditable when building jar
+            inputStream = new FileInputStream(new File(propertiesdirectoryPath));
 
             if(inputStream != null){
                 properties.load(inputStream);

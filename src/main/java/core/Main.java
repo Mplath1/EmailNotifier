@@ -19,7 +19,7 @@ import java.util.Scanner;
 
 
 public class Main extends Application {
-    public static PropertyValues appProps;
+    public static PropertyValues appProps; //possibly create Map of K,V pairs to store properties after intial load
     public static ArrayList<String> previouslySentFiles;
 
     @Override

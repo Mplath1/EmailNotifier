@@ -167,8 +167,9 @@ public class Email implements Callable {
             System.out.println("ALL OTHER EMAIL PARTS SET");
             try{
                 System.out.println("TRYING TO SEND EMAIL WITH ATTACHMENT:" + source.getName() + " SENT AS " + filename);
-                Transport.send(message); //freezing thread
+                Transport.send(message);
                 System.out.println("EMAIL NOW SENT");
+                //set emailAddressMap entry in Customer class to true
                 return true;
             }catch(SendFailedException e){
                 //this section catches emails that can't be sent (bounce backs) and constructs a new email that is sent
@@ -184,6 +185,7 @@ public class Email implements Callable {
                 MimeMultipart invalidMultiPart = new MimeMultipart();
                 invalidAttachment.setDataHandler(new DataHandler(source));
                 invalidAttachment.setFileName(attachmentName);
+                //set emailAddressMap entry in Customer class to false
 
                 invalidMultiPart.addBodyPart(invalidBodyPart);
                 invalidMultiPart.addBodyPart(invalidAttachment);
@@ -198,6 +200,7 @@ public class Email implements Callable {
         return false;
     }
 
+    //TODO: eliminate once emailAddressMap implemented in Customer class
     public static String[] splitRecipients(String listOfRecipients){
         //push changes by 6/18 if there are no issues
         String[] theRawList=listOfRecipients.split(";");

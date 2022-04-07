@@ -103,9 +103,8 @@ public class MainWindowController {
 
         //Load All Available Templates
         //ClassLoader loader =  getClass().getClassLoader();
-        //URL resource = loader.getResource("AttachmentTemplates");
+        //URL resource = loader.getResource("AttachmentTemplates"); works but makes resources uneditable when building jar
         String attachmentDirectoryPath = appProps.getProperty("defaultAttachmentTemplateDirectory");
-        //TODO: correct config file
 
         List<File> collect = null;
         try {

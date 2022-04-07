@@ -78,7 +78,6 @@ public class Attachment implements Callable {
         return null;
     }
 
-    //TODO: possible rewrite to return File instead of Workbook
     File createAttachment() throws InvalidFormatException {
         try {
             String filePath = "src/resources/AttachmentTemplates/" + theFile;
@@ -109,6 +108,8 @@ public class Attachment implements Callable {
             currentCell.setCellValue("$" + currentInvoice.getDollarValue());
             startingRow++;
             }
+
+            //TODO: seperate into new private method
             String tempOutFile = "src/resources/AttachmentTemplates";
             File outputFile = new File(tempOutFile + "/temp.xlsx");
             FileOutputStream fileout = new FileOutputStream(outputFile);
