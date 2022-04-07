@@ -19,7 +19,7 @@ import java.util.Scanner;
 
 
 public class Main extends Application {
-    public static PropertyValues appProps; //possibly create Map of K,V pairs to store properties after intial load
+    public static PropertyValues appProps;
     public static ArrayList<String> previouslySentFiles;
 
     @Override
@@ -42,32 +42,32 @@ public class Main extends Application {
         Parent root = loader.load();
 
         System.out.println("It worked!");
-        Properties properties = System.getProperties();
-        Session session = Session.getDefaultInstance(properties);
-        InetAddress host;
-        try{
-            host = InetAddress.getLocalHost();
-        }catch(Exception e){
-            System.out.println(e.getCause().toString());
-        }
-        try {
-            appProps.getPropValues();
-            System.out.println(appProps.getProperty("defaultListLoadDirectory"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        String sender = appProps.getProperty("sender");
-        String fromAddress = appProps.getProperty("mail.stmp.from");
-        String mailHost = appProps.getProperty("mail.stmp.host");
-        String port = appProps.getProperty("mail.stmp.port");
-        String starttlsEnable = appProps.getProperty("mail.smtp.starttls.enable");
-        properties.put("mail.smtp.port", "25");
-        properties.put("mail.smtp.starttls.enable", starttlsEnable);
-        properties.put("mail.smtp.host",mailHost);
-        //properties.put("mail.smtp.port", port); //PORT LOADS AS NULL?
-        properties.put("mail.smtp.from",fromAddress);
-
-
+//        Properties systemProperties = System.getProperties();
+//        Session session = Session.getDefaultInstance(systemProperties);
+//        InetAddress host;
+//        try{
+//            host = InetAddress.getLocalHost();
+//        }catch(Exception e){
+//            System.out.println(e.getCause().toString());
+//        }
+////        try {
+////            appProps.getPropValues();
+////            System.out.println(appProps.getProperty("defaultListLoadDirectory"));
+////        } catch (IOException e) {
+////            e.printStackTrace();
+////        }
+//        String sender = appProps.getProperty("sender");
+//        String fromAddress = appProps.getProperty("mail.smtp.from");
+//        String mailHost = appProps.getProperty("mail.smtp.host");
+//        String port = appProps.getProperty("mail.smtp.port");
+//        String starttlsEnable = appProps.getProperty("mail.smtp.starttls.enable");
+//        systemProperties.put("mail.smtp.port", "25");
+//        systemProperties.put("mail.smtp.starttls.enable", starttlsEnable);
+//        systemProperties.put("mail.smtp.host",mailHost);
+//        systemProperties.put("mail.smtp.port", port);
+//        systemProperties.put("mail.smtp.from",fromAddress);
+//
+//
 
         primaryStage.setTitle("Email Prenotifications");
         primaryStage.setScene(new Scene(root, 350, 350));
@@ -76,10 +76,26 @@ public class Main extends Application {
 
     private void bootstrap() throws IOException {
         appProps = new PropertyValues("config.properties");
-
-
-        //String attachmentDirectoryPath = appProps.getProperty("defaultAttachmentTemplateDirectory");
         //TODO:: load config.properties from outside path and not include with JAR
+        Properties systemProperties = System.getProperties();
+        Session session = Session.getDefaultInstance(systemProperties);
+        InetAddress host;
+        try{
+            host = InetAddress.getLocalHost();
+        }catch(Exception e){
+            System.out.println(e.getCause().toString());
+        }
+
+        String sender = appProps.getProperty("sender");
+        String fromAddress = appProps.getProperty("mail.smtp.from");
+        String mailHost = appProps.getProperty("mail.smtp.host");
+        String port = appProps.getProperty("mail.smtp.port");
+        String starttlsEnable = appProps.getProperty("mail.smtp.starttls.enable");
+        systemProperties.put("mail.smtp.port", "25");
+        systemProperties.put("mail.smtp.starttls.enable", starttlsEnable);
+        systemProperties.put("mail.smtp.host",mailHost);
+        systemProperties.put("mail.smtp.port", port);
+        systemProperties.put("mail.smtp.from",fromAddress);
 
 
 

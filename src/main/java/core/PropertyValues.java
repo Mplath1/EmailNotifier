@@ -12,13 +12,22 @@ public class PropertyValues {
 
     String values = "";
     InputStream inputStream;
-    String propertiesFileName;
+    String propertiesFileName; //TODO: create properties filename and directory fields
     Properties properties;
 
 
     public PropertyValues(String fileName){
         propertiesFileName = fileName;
         properties = new Properties();
+        String propertiesdirectoryPath = "src/resources/config.properties";
+        try {
+            inputStream = new FileInputStream(new File(propertiesdirectoryPath));
+            properties.load(inputStream);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public String getPropertiesFileName() {
@@ -53,16 +62,16 @@ public class PropertyValues {
     public String getProperty(String propertyName) throws IOException {
         String property = "";
         try{
-            String propertiesdirectoryPath = "src/resources/config.properties";
-            URL otherFileName = getClass().getClassLoader().getResource("config.properties");
-            //inputStream = getClass().getResourceAsStream("/config.properties"); //works but makes config file uneditable when building jar
-            inputStream = new FileInputStream(new File(propertiesdirectoryPath));
-
-            if(inputStream != null){
-                properties.load(inputStream);
-            }else{
-                throw new FileNotFoundException("Property file " + propertiesFileName + " could not be located!");
-            }
+//            String propertiesdirectoryPath = "src/resources/config.properties";
+//            URL otherFileName = getClass().getClassLoader().getResource("config.properties");
+//            //inputStream = getClass().getResourceAsStream("/config.properties"); //works but makes config file uneditable when building jar
+//            inputStream = new FileInputStream(new File(propertiesdirectoryPath));
+//
+//            if(inputStream != null){
+//                properties.load(inputStream);
+//            }else{
+//                throw new FileNotFoundException("Property file " + propertiesFileName + " could not be located!");
+//            }
 
             Date time = new Date(System.currentTimeMillis());
 

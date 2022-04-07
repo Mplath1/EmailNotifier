@@ -34,7 +34,8 @@ public class Email implements Callable {
 
 
     Properties properties = System.getProperties();
-    Session session = Session.getDefaultInstance(properties);
+    //Session session = Session.getDefaultInstance(properties);
+    Session session = Session.getInstance(properties); //static?
 
     public Email(String recipient, String attachmentName, String emailSubject, String bodyText ) throws IOException {
         this.recipient = recipient;
@@ -50,18 +51,10 @@ public class Email implements Callable {
 
 
         sender = appProps.getProperty("sender");
-        String fromAddress = appProps.getProperty("mail.stmp.from");
-        String mailHost = appProps.getProperty("mail.stmp.host");
-        String port = appProps.getProperty("mail.stmp.port");
-        String starttlsEnable = appProps.getProperty("mail.smtp.starttls.enable");
-
-
-        properties.put("mail.smtp.port", "25");
-        properties.put("mail.smtp.starttls.enable", starttlsEnable);
-        properties.put("mail.smtp.host",mailHost);
-        //properties.put("mail.smtp.port", port); //PORT LOADS AS NULL?
-        properties.put("mail.smtp.from",fromAddress);
-
+        String fromAddress = properties.getProperty("mail.smtp.from");
+        String mailHost = properties.getProperty("mail.smtp.host");
+        String port = properties.getProperty("mail.smtp.port");
+        String starttlsEnable = properties.getProperty("mail.smtp.starttls.enable");
     }
 
     public void setAttachentFile(File attachentFile) {

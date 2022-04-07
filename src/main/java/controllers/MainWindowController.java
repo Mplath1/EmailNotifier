@@ -372,9 +372,9 @@ public class MainWindowController {
     //TODO: eliminate other processList method. possibly pass a callback
     public void processList2(ArrayList<Customer> customerList, String emailSubject, String emailMessage){
 //       customerList.get(1).setCustomerEmail("mplath@usawineimports.com");
-       customerList.get(9).setCustomerEmail("map30269@yahoo.com;mplath@usawineimports.com");
-        customerList.get(6).setCustomerEmail(null);
-        customerList.get(7).setCustomerEmail("ArthurDent");
+//       customerList.get(9).setCustomerEmail("map30269@yahoo.com;mplath@usawineimports.com");
+//        customerList.get(6).setCustomerEmail(null);
+//        customerList.get(7).setCustomerEmail("ArthurDent");
 
         Task altTask = new Task() {
             @Override
