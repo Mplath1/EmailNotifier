@@ -1,5 +1,8 @@
 package core;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.*;
 import java.net.URL;
 import java.util.Date;
@@ -8,7 +11,7 @@ import java.util.Properties;
 import static core.Main.appProps;
 
 public class PropertyValues {
-
+    private static final Logger log = LoggerFactory.getLogger(PropertyValues.class);
 
     String values = "";
     InputStream inputStream;
@@ -23,8 +26,10 @@ public class PropertyValues {
         try {
             inputStream = new FileInputStream(new File(propertiesdirectoryPath));
             properties.load(inputStream);
+            log.debug("Config file loaded:{}",propertiesdirectoryPath);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
+            log.error("ERROR:{}",e);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -76,10 +81,7 @@ public class PropertyValues {
             Date time = new Date(System.currentTimeMillis());
 
             property = properties.getProperty(propertyName);
-
-            System.out.println(propertyName + " = " + property + "\tRetrieved from " + propertiesFileName +
-                    " at " + time.toString());
-
+            log.debug("propertyv\'{}\' retrieved as:{}",propertyName,property);
         }catch (Exception e){
             System.err.println(e);
         }finally {

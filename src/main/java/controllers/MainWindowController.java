@@ -1,5 +1,6 @@
 package controllers;
 
+import core.Main;
 import javafx.beans.binding.BooleanBinding;
 import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
@@ -16,6 +17,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.*;
@@ -32,6 +35,8 @@ import static core.Main.previouslySentFiles;
 import static org.apache.commons.io.FilenameUtils.removeExtension;
 
 public class MainWindowController {
+    private static final Logger log = LoggerFactory.getLogger(MainWindowController.class);
+
     @FXML
     GridPane grid;
     @FXML
@@ -100,7 +105,6 @@ public class MainWindowController {
     protected void loadTemplateOptions() throws IOException {
         emailSubjectComboBox.getItems().add("NYSLA Prenotification");
         emailSubjectComboBox.getItems().add("Final Notice");
-
         //Load All Available Templates
         //ClassLoader loader =  getClass().getClassLoader();
         //URL resource = loader.getResource("AttachmentTemplates"); works but makes resources uneditable when building jar
@@ -116,6 +120,7 @@ public class MainWindowController {
         for(File currentFile: collect){
             emailSubjectComboBox.getItems().add(removeExtension(currentFile.getName()));
             attachmentFileComboBox.getItems().add(currentFile.getName());
+            log.debug("Options added to comboboxes:{}",removeExtension(currentFile.getName()));
         }
     }
 
@@ -164,9 +169,11 @@ public class MainWindowController {
         try {
             wb = WorkbookFactory.create(new File(listFile.getText()));
             System.out.println(listFile.getText() + " loaded as " + wb.getSpreadsheetVersion().toString());
+            log.debug("Loaded \'{}\' as \'{}\'",listFile.getText(),wb.getSpreadsheetVersion());
         } catch (IOException e) {
             e.printStackTrace();
             System.err.println("Unable to load selected file:" + listFile.getText());
+            log.error("Unable to load:{} - {}",listFile.getText(),e);
         }
 
         ArrayList<Customer> customerListToSend = loadListToSend2(wb);
@@ -371,7 +378,7 @@ public class MainWindowController {
 
     //TODO: eliminate other processList method. possibly pass a callback
     public void processList2(ArrayList<Customer> customerList, String emailSubject, String emailMessage){
-       customerList.get(1).setCustomerEmail("mplath@usawineimports.com");
+//       customerList.get(1).setCustomerEmail("mplath@usawineimports.com");
 //       customerList.get(9).setCustomerEmail("map30269@yahoo.com;mplath@usawineimports.com");
 //        customerList.get(6).setCustomerEmail(null);
 //        customerList.get(7).setCustomerEmail("ArthurDent");

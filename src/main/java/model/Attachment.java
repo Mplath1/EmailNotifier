@@ -16,19 +16,19 @@ import java.util.concurrent.Callable;
 public class Attachment implements Callable {
 
     private Line theLine;
-    private String theFile;
+    private String templateFileName;
     public Workbook theWorkbook;
     private Customer customer;
 
-    public Attachment(Line theLine,String theFile){
+    public Attachment(Line theLine,String templateFileName){
         this.theLine = theLine;
-        this.theFile = theFile;
+        this.templateFileName = templateFileName;
         theWorkbook = null;
     }
 
-    public Attachment(Customer customer, String theFile){
+    public Attachment(Customer customer, String templateFileName){
         this.customer = customer;
-        this.theFile = theFile;
+        this.templateFileName = templateFileName;
     }
 
     @Override
@@ -80,7 +80,7 @@ public class Attachment implements Callable {
 
     File createAttachment() throws InvalidFormatException {
         try {
-            String filePath = "src/resources/AttachmentTemplates/" + theFile;
+            String filePath = "src/resources/AttachmentTemplates/" + templateFileName;
             System.out.println("Opening " + filePath);
             File fis = new File(filePath);
             Workbook attachmentWorkbook = new XSSFWorkbook(fis);

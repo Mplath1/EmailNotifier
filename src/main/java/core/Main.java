@@ -7,6 +7,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.mail.Session;
 
@@ -21,6 +23,7 @@ import java.util.Scanner;
 public class Main extends Application {
     public static PropertyValues appProps;
     public static ArrayList<String> previouslySentFiles;
+    private static final Logger log = LoggerFactory.getLogger(Main.class);
 
     @Override
     public void start(Stage primaryStage) throws Exception{
@@ -37,11 +40,10 @@ public class Main extends Application {
         loader.setLocation(otherView);
         //loader.setRoot(otherView.getFile());
         //System.out.println(loader.getRoot().toString());
-        System.out.println("OtherView Loaded as =" + loader.getLocation());
-        System.out.println("Let's go...");
+        System.out.println("OtherView Loaded as = " + loader.getLocation());
+        log.debug("Loaded view \'{}\' from:{}",loader.getLocation().getFile(),loader.getLocation());
         Parent root = loader.load();
 
-        System.out.println("It worked!");
 //        Properties systemProperties = System.getProperties();
 //        Session session = Session.getDefaultInstance(systemProperties);
 //        InetAddress host;
@@ -96,7 +98,6 @@ public class Main extends Application {
         systemProperties.put("mail.smtp.host",mailHost);
         systemProperties.put("mail.smtp.port", port);
         systemProperties.put("mail.smtp.from",fromAddress);
-
 
 
 
