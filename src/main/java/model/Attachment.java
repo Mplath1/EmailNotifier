@@ -6,6 +6,8 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,6 +16,7 @@ import java.io.IOException;
 import java.util.concurrent.Callable;
 
 public class Attachment implements Callable {
+    private static final Logger log = LoggerFactory.getLogger(Attachment.class);
 
     private Line theLine;
     private String templateFileName;
@@ -114,15 +117,16 @@ public class Attachment implements Callable {
             File outputFile = new File(tempOutFile + "/temp.xlsx");
             FileOutputStream fileout = new FileOutputStream(outputFile);
             attachmentWorkbook.write(fileout);
-            System.out.println("Temp file written...");
+            log.debug("temp file written:{}",outputFile);
             attachmentWorkbook.close();
-            System.out.println("...and closed");
+            log.debug("workbook closed");
             fileout.close();
-            System.out.println("Template closed");
+            log.debug("temp file closed");
 
             return outputFile;
         } catch (IOException e) {
             e.printStackTrace();
+            log.debug("Error creating attachment - {}",e);
         }
         return null;
     }

@@ -1,5 +1,9 @@
 package model;
 
+import core.Main;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
@@ -22,6 +26,7 @@ import static core.Main.appProps;
  * Created by Michael Plath on 3/8/2018.
  */
 public class Email implements Callable {
+    private static final Logger log = LoggerFactory.getLogger(Email.class);
 
     String recipient;
     String sender; //static?
@@ -68,11 +73,11 @@ public class Email implements Callable {
     //add try and connection timeout
     public boolean sendTheEmail(){
         try{
+            log.debug("session - {}",session);
             MimeMessage message = new MimeMessage(session);
             message.setFrom(sender);
             //This if/else statement checks if email contains semi-colons. If so it breaks apart the String
             //and adds each String as a recipient
-            System.out.println("Inside SendTheEmail function");
             if(recipient.contains(";")){
                 String[] listOfRecipients=splitRecipients(recipient);
                 for (String theRecipient : listOfRecipients){
@@ -101,6 +106,7 @@ public class Email implements Callable {
                         }catch(Exception e){
                             System.out.println("Exception thrown by " + theRecipient.toString());
                             e.printStackTrace();
+                            log.debug("Unable to send for:{} - {}",theRecipient,e);
                         }
                     }
                 }
@@ -131,6 +137,7 @@ public class Email implements Callable {
                     }catch(Exception e){
                         System.out.println("Exception thrown by " + recipient.toString());
                         e.printStackTrace();
+                        log.debug("Unable to send for:{} - {}",recipient,e);
                     }}
 
             }
@@ -157,17 +164,17 @@ public class Email implements Callable {
             multipart.addBodyPart(attachmentBodyPart);
 
             message.setContent(multipart);
-            System.out.println("ALL OTHER EMAIL PARTS SET");
+            log.debug("all email parts set for:{}",recipient);
             try{
-                System.out.println("TRYING TO SEND EMAIL WITH ATTACHMENT:" + source.getName() + " SENT AS " + filename);
+                log.debug("preparing to send email to:{}",recipient);
                 Transport.send(message);
-                System.out.println("EMAIL NOW SENT");
+                log.debug("email successfully sent to:{}", recipient);
                 //set emailAddressMap entry in Customer class to true
                 return true;
             }catch(SendFailedException e){
                 //this section catches emails that can't be sent (bounce backs) and constructs a new email that is sent
                 //to my inbox so that I'm aware the email was unsuccessful
-                System.out.println("EXCEPTION- SEND FAILED");
+                log.debug("failure to send email:{}",recipient);
                 MimeMessage invalid = new MimeMessage(session);
                 invalid.setFrom("mplath@usawineimports.com");
                 invalid.addRecipient(Message.RecipientType.TO,new InternetAddress("mplath@usawineimports.com"));
@@ -183,7 +190,9 @@ public class Email implements Callable {
                 invalidMultiPart.addBodyPart(invalidBodyPart);
                 invalidMultiPart.addBodyPart(invalidAttachment);
                 invalid.setContent(invalidMultiPart);
+                log.debug("preparing to send failure email to:{}",recipient);
                 Transport.send(invalid);
+                log.debug("failure email successfully sent to:{}", recipient);
             }
 
 

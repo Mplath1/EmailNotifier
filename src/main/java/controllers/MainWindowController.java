@@ -120,7 +120,7 @@ public class MainWindowController {
         for(File currentFile: collect){
             emailSubjectComboBox.getItems().add(removeExtension(currentFile.getName()));
             attachmentFileComboBox.getItems().add(currentFile.getName());
-            log.debug("Options added to comboboxes:{}",removeExtension(currentFile.getName()));
+            log.debug("Option added to comboboxes:{}",removeExtension(currentFile.getName()));
         }
     }
 
@@ -177,14 +177,17 @@ public class MainWindowController {
         }
 
         ArrayList<Customer> customerListToSend = loadListToSend2(wb);
+        log.debug("list of {} customers loaded", customerListToSend.size());
 
 
         String emailSubject = String.valueOf(emailSubjectComboBox.getSelectionModel().getSelectedItem());
         String emailMessage;
         if(customMessageTextArea.getText().isEmpty()){
             emailMessage = appProps.getProperty("bodyText");
+            log.debug("custom text not entered. using text\'{}\'",emailMessage);
         }else{
             emailMessage = customMessageTextArea.getText();
+            log.debug("custom text set to \'{}\'",emailMessage);
         }
             processList2(customerListToSend,emailSubject,emailMessage);
             ///put tasks after process into overall cleanup method
@@ -235,6 +238,9 @@ public class MainWindowController {
         alert.setX(parentWindowTopRightCorner + 100);
         alert.setResizable(true);
         alert.showAndWait();
+        log.debug("completion report displayed");
+        log.debug("emails sent:{}",noEmailsSent);
+        log.debug("emails unable to send:{}",noPrinted);
     }
 
     //IN PROGRESS can update but issues with output
@@ -392,22 +398,21 @@ public class MainWindowController {
                     if (StringUtils.isBlank(emailAddresses)) {
                         emailAddresses = ""; //seems redundant but had trouble with cust Miss Korea trying to create email with null
                     }
-                    System.out.println(customerList.get(i).getCustomerName() + " email is " + customerList.get(i).getCustomerEmail());
+                    log.debug("\'{}\' email is:{}",customerList.get(i).getCustomerName(),customerList.get(i).getCustomerEmail());
                     if(!emailAddresses.equals(null) && !emailAddresses.isEmpty() && emailAddresses.trim().length() != 0) {
 
                         String selectedFileName = attachmentFileComboBox.getSelectionModel().getSelectedItem().toString();
 
                         Attachment otherAttachment = new Attachment(customerList.get(i), selectedFileName);
                         File fileAttachment = (File) otherAttachment.call(); //TODO:set this into email
-                        System.out.println("Attachment made : " + fileAttachment.getName());
                         Email theEmail = new Email(emailAddresses, selectedFileName, emailSubject, emailMessage);
                         theEmail.setAttachentFile(fileAttachment);
 //                        String tempFilePathAndName = "src/resources/AttachmentTemplates/temp.xlsx";
 //                        Email theEmail = new Email(emailAddresses, tempFilePathAndName, emailSubject, emailMessage);
                         success = (boolean) theEmail.call();
                     }else{
-                        System.out.println("Adding " + customerList.get(i).getCustomerName() + " to nonsendable");
                         nonSendableCustomers.add(customerList.get(i));
+                        log.debug("added to list of nonsendable:{}",customerList.get(i).getCustomerName());
                     }
                     String message = "";
                     if(success){
@@ -419,7 +424,7 @@ public class MainWindowController {
                     }
                     message += "\n" + i + "/" + customerList.size();
 
-                    System.out.println(i + "/" + customerList.size() +"\t" + success + "\n");
+                    log.debug("{}/{} complete",i,customerList.size());
                     updateProgress(i,customerList.size());
                     updateMessage(message);
 
@@ -429,6 +434,7 @@ public class MainWindowController {
                 updateMessage("COMPLETE");
                 //delete Temp file no matter what. Possibly move to cleanUp method
                 boolean tempFileDeleted = Files.deleteIfExists(Paths.get("src/resources/AttachmentTemplates/temp.xlsx"));
+                log.debug("temp file deleted:{}",tempFileDeleted);
                 return null;
             }
         };

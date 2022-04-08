@@ -40,36 +40,8 @@ public class Main extends Application {
         loader.setLocation(otherView);
         //loader.setRoot(otherView.getFile());
         //System.out.println(loader.getRoot().toString());
-        System.out.println("OtherView Loaded as = " + loader.getLocation());
         log.debug("Loaded view \'{}\' from:{}",loader.getLocation().getFile(),loader.getLocation());
         Parent root = loader.load();
-
-//        Properties systemProperties = System.getProperties();
-//        Session session = Session.getDefaultInstance(systemProperties);
-//        InetAddress host;
-//        try{
-//            host = InetAddress.getLocalHost();
-//        }catch(Exception e){
-//            System.out.println(e.getCause().toString());
-//        }
-////        try {
-////            appProps.getPropValues();
-////            System.out.println(appProps.getProperty("defaultListLoadDirectory"));
-////        } catch (IOException e) {
-////            e.printStackTrace();
-////        }
-//        String sender = appProps.getProperty("sender");
-//        String fromAddress = appProps.getProperty("mail.smtp.from");
-//        String mailHost = appProps.getProperty("mail.smtp.host");
-//        String port = appProps.getProperty("mail.smtp.port");
-//        String starttlsEnable = appProps.getProperty("mail.smtp.starttls.enable");
-//        systemProperties.put("mail.smtp.port", "25");
-//        systemProperties.put("mail.smtp.starttls.enable", starttlsEnable);
-//        systemProperties.put("mail.smtp.host",mailHost);
-//        systemProperties.put("mail.smtp.port", port);
-//        systemProperties.put("mail.smtp.from",fromAddress);
-//
-//
 
         primaryStage.setTitle("Email Prenotifications");
         primaryStage.setScene(new Scene(root, 350, 350));
@@ -124,6 +96,7 @@ public class Main extends Application {
             return listToReturn;
 
         }catch (IOException e){
+            log.debug("Unable to load \'{}\' - {}",file.getName(),e);
             return listToReturn;
 
         }
