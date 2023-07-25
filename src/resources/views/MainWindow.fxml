@@ -8,6 +8,7 @@
     <VBox spacing="7">
         <Button fx:id="listSelect" text="Select List" onAction="#selectList"/>
         <TextField fx:id="listFile" editable="false"/>
+        <Button fx:id="listLoadButton" text="Import List" onAction="#importList"/>
         <ComboBox fx:id="attachmentFileComboBox" promptText="Select Attachement"></ComboBox>
        <!-- <Button fx:id="attachmentSelectButton" text="Select Attachement" onAction="#selectAttachment"/>
         <TextField fx:id="attachmentFile" editable="false"/>-->

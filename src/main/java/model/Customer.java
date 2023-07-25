@@ -31,7 +31,8 @@ public class Customer {
 
     //TODO: Use this constructor movving forward and set customerEmail upon database retrieval
     public Customer(String licenseNumber, String customerName) {
-        this.licenseNumber = licenseNumber;
+        String license[] = licenseNumber.split("\\.");
+        this.licenseNumber = license[0];
         this.customerName = customerName;
         invoiceList = new ArrayList<>();
         emailAddressMap = new HashMap<>();

@@ -14,6 +14,7 @@ import javafx.scene.layout.Region;
 import javafx.stage.FileChooser;
 import model.*;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -44,6 +45,8 @@ public class MainWindowController {
     @FXML
     TextField listFile;
     @FXML
+    Button listLoadButton;
+    @FXML
     ComboBox attachmentFileComboBox;
 //    @FXML
 //    Button attachmentSelectButton;
@@ -68,12 +71,16 @@ public class MainWindowController {
 
     static int noEmailsSent;
     static int noPrinted;
+
+    Workbook wb;
+    ArrayList<Customer> customerListToSend;
     ArrayList<String> testNonSendable; //may need to make static
     ArrayList<Customer> nonSendableCustomers; //may need to make static
 
     public void initialize() throws IOException {
         noEmailsSent = 0;
         noPrinted = 0;
+        wb = null;
         testNonSendable = new ArrayList<>();
         nonSendableCustomers = new ArrayList<>();
         progressBar.setProgress(0);
@@ -139,6 +146,40 @@ public class MainWindowController {
             listFile.setText(file.toString());
         } else {
             System.out.println("You must select a file");
+        } //TODO: add button that loads in list. this can serve as a list validator and throw errors
+    }
+    @FXML
+    protected void importList(ActionEvent event) throws Exception {
+        //works with HSSF(.xls) or XSSF(.xlsx)
+        //Workbook wb = null;
+        log.debug("importList method called");
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        StringBuilder sb = new StringBuilder();
+        String fullMessage = "";
+        try {
+            File fileToLoad = new File(listFile.getText());
+            wb = WorkbookFactory.create(fileToLoad); //xls won't load here but xlsx will
+            SpreadsheetVersion version = wb.getSpreadsheetVersion();
+            System.out.println(listFile.getText() + " loaded as " + wb.getSpreadsheetVersion().toString());
+            log.debug("Loaded \'{}\' as \'{}\'",listFile.getText(),wb.getSpreadsheetVersion());
+            customerListToSend = loadListToSend2(wb);
+            log.debug("list of {} customers loaded", customerListToSend.size());
+            sb.append("Loaded Customers successfully!");
+            alert.setHeaderText("Successful Load");
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.err.println("Unable to load selected file:" + listFile.getText());
+            log.error("Unable to load:{} - {}",listFile.getText(),e);
+            sb.append("Unable to load:\n" + e.toString());
+            alert.setHeaderText("Load Failed");
+        }finally{
+            fullMessage = sb.toString();
+            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+            alert.setContentText(fullMessage);
+            double parentWindowTopRightCorner = grid.getScene().getWindow().getX() + grid.getScene().getWindow().getWidth();
+            alert.setX(parentWindowTopRightCorner + 100);
+            alert.setResizable(true);
+            alert.showAndWait();
         }
     }
 
@@ -165,19 +206,21 @@ public class MainWindowController {
        displayAlreadySentMessage();
 
         //works with HSSF(.xls) or XSSF(.xlsx)
-        Workbook wb = null;
-        try {
-            wb = WorkbookFactory.create(new File(listFile.getText()));
-            System.out.println(listFile.getText() + " loaded as " + wb.getSpreadsheetVersion().toString());
-            log.debug("Loaded \'{}\' as \'{}\'",listFile.getText(),wb.getSpreadsheetVersion());
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.err.println("Unable to load selected file:" + listFile.getText());
-            log.error("Unable to load:{} - {}",listFile.getText(),e);
-        }
-
-        ArrayList<Customer> customerListToSend = loadListToSend2(wb);
-        log.debug("list of {} customers loaded", customerListToSend.size());
+//        Workbook wb = null;
+//        try {
+//           File fileToLoad = new File(listFile.getText());
+//            wb = WorkbookFactory.create(fileToLoad); //xls won't load here but xlsx will
+//            SpreadsheetVersion version = wb.getSpreadsheetVersion();
+//            //System.out.println(listFile.getText() + " loaded as " + wb.getSpreadsheetVersion().toString());
+//            log.debug("Loaded \'{}\' as \'{}\'",listFile.getText(),wb.getSpreadsheetVersion());
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            System.err.println("Unable to load selected file:" + listFile.getText());
+//            log.error("Unable to load:{} - {}",listFile.getText(),e);
+//        }
+//
+//        ArrayList<Customer> customerListToSend = loadListToSend2(wb);
+//        log.debug("list of {} customers loaded", customerListToSend.size());
 
 
         String emailSubject = String.valueOf(emailSubjectComboBox.getSelectionModel().getSelectedItem());
@@ -189,6 +232,7 @@ public class MainWindowController {
             emailMessage = customMessageTextArea.getText();
             log.debug("custom text set to \'{}\'",emailMessage);
         }
+            customerListToSend = populateEmailAddresses(customerListToSend);
             processList2(customerListToSend,emailSubject,emailMessage);
             ///put tasks after process into overall cleanup method
 
@@ -384,6 +428,7 @@ public class MainWindowController {
 
     //TODO: eliminate other processList method. possibly pass a callback
     public void processList2(ArrayList<Customer> customerList, String emailSubject, String emailMessage){
+
 //       customerList.get(1).setCustomerEmail("mplath@usawineimports.com");
 //       customerList.get(9).setCustomerEmail("map30269@yahoo.com;mplath@usawineimports.com");
 //        customerList.get(6).setCustomerEmail(null);
@@ -539,7 +584,8 @@ public class MainWindowController {
     }
 
     //TODO: eliminate other loadListToSend method and use this to populate data
-    public static ArrayList<Customer> loadListToSend2(Workbook workbook) {
+    //TODO: ensure list is valid
+    public static ArrayList<Customer> loadListToSend2 (Workbook workbook) throws IOException{
         ArrayList<Customer> customerList = new ArrayList<>();
 
         Iterator<Sheet> sheetIterator = workbook.sheetIterator();
@@ -555,8 +601,12 @@ public class MainWindowController {
                     Cell cell = cellIterator.next();
                     String cellValue = cell.toString();
                     rowContents.add(cellValue);
-
+                    //license keep loading as strings with decimal place on the end. interferes with later comparisons
                 }
+                if(rowContents.get(6) == ""){
+                    throw new IOException("Flaw in list\nCheck Row:" + row.getRowNum());
+                }
+
                 Customer currentCustomer = new Customer(rowContents.get(5),rowContents.get(6));
                 Invoice currentInvoice = new Invoice(rowContents.get(0),rowContents.get(1),rowContents.get(2),
                         rowContents.get(3),rowContents.get(4),rowContents.get(7));
@@ -591,7 +641,7 @@ public class MainWindowController {
         String query = "SELECT strEmail, strCompanyName, memWebSite FROM tblARCustomer";// WHERE strCustomerType = Retail";
         progressLabel.setText("Connecting to database...");
         try (Connection conn = DriverManager.getConnection(dbConnection)) {
-            System.out.println("Connection was successful");
+            log.debug("Connected to database successfully!");
             progressLabel.setText("Connected to database");
             PreparedStatement preparedStatement = conn.prepareStatement(query);
             for (Customer custFromInput : listOfPrenotifications) {
@@ -599,13 +649,18 @@ public class MainWindowController {
                 System.out.println(license);
                 ResultSet rs = preparedStatement.executeQuery();
                 while(rs.next()) {
-                    if(rs.getString("strmEmail").trim().replaceAll("\\.0*$", "") == custFromInput.getLicenseNumber()){
-                        custFromInput.setCustomerEmail(rs.getString("memWebsite")); //check for null too
+                    if (rs.getString("strEmail") != null) {
+                        System.out.println(rs.getString("strEmail").trim().replaceAll("\\.0*$", ""));
+                        if (custFromInput.getLicenseNumber().equals(rs.getString("strEmail").trim().replaceAll("\\.0*$", ""))) {
+                            custFromInput.setCustomerEmail(rs.getString("memWebsite")); //check for null too
+                            System.out.println("Match found!");
                         }
                     }
                 }
+                }
         }catch(SQLException e){
             System.out.println(e);
+            log.debug("Connection to database failed!");
         }
 
         return listOfPrenotifications;
