@@ -1,6 +1,5 @@
 package controllers;
 
-import core.Main;
 import javafx.beans.binding.BooleanBinding;
 import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
@@ -22,7 +21,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
-import java.net.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.*;
@@ -146,7 +144,7 @@ public class MainWindowController {
             listFile.setText(file.toString());
         } else {
             System.out.println("You must select a file");
-        } //TODO: add button that loads in list. this can serve as a list validator and throw errors
+        }
     }
     @FXML
     protected void importList(ActionEvent event) throws Exception {
@@ -233,7 +231,7 @@ public class MainWindowController {
             log.debug("custom text set to \'{}\'",emailMessage);
         }
             customerListToSend = populateEmailAddresses(customerListToSend);
-            processList2(customerListToSend,emailSubject,emailMessage);
+           processList2(customerListToSend,emailSubject,emailMessage);
             ///put tasks after process into overall cleanup method
 
         };
@@ -451,7 +449,7 @@ public class MainWindowController {
                         Attachment otherAttachment = new Attachment(customerList.get(i), selectedFileName);
                         File fileAttachment = (File) otherAttachment.call(); //TODO:set this into email
                         Email theEmail = new Email(emailAddresses, selectedFileName, emailSubject, emailMessage);
-                        theEmail.setAttachentFile(fileAttachment);
+                        theEmail.setAttachmentFile(fileAttachment);
 //                        String tempFilePathAndName = "src/resources/AttachmentTemplates/temp.xlsx";
 //                        Email theEmail = new Email(emailAddresses, tempFilePathAndName, emailSubject, emailMessage);
                         success = (boolean) theEmail.call();
@@ -584,7 +582,7 @@ public class MainWindowController {
     }
 
     //TODO: eliminate other loadListToSend method and use this to populate data
-    //TODO: ensure list is valid
+    //TODO: ensure list is valid. error checking only ensures customer name is present
     public static ArrayList<Customer> loadListToSend2 (Workbook workbook) throws IOException{
         ArrayList<Customer> customerList = new ArrayList<>();
 
@@ -631,9 +629,12 @@ public class MainWindowController {
         //TODO: seperate and create connection factory and DAO patterns
         String dbConnection = null;
         try {
-            dbConnection = appProps.getProperty("server") + ";" + appProps.getProperty("instanceName")
-                    + ";databasename=" + appProps.getProperty("dbName") + ";user=" + appProps.getProperty("user")
-                    + ";password=" + appProps.getProperty("serverPassword");
+            dbConnection = appProps.getProperty("server") + ";"
+                    + appProps.getProperty("instanceName")
+                    + ";databasename=" + appProps.getProperty("dbName") + ";user="
+                    + appProps.getProperty("user")
+                    + ";password="
+                    + appProps.getProperty("serverPassword");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -646,20 +647,21 @@ public class MainWindowController {
             PreparedStatement preparedStatement = conn.prepareStatement(query);
             for (Customer custFromInput : listOfPrenotifications) {
                 String license = custFromInput.getLicenseNumber();
-                System.out.println(license);
+                //System.out.println(license);
                 ResultSet rs = preparedStatement.executeQuery();
                 while(rs.next()) {
                     if (rs.getString("strEmail") != null) {
-                        System.out.println(rs.getString("strEmail").trim().replaceAll("\\.0*$", ""));
+                        log.debug(rs.getString("strEmail").trim().replaceAll("\\.0*$", ""));
                         if (custFromInput.getLicenseNumber().equals(rs.getString("strEmail").trim().replaceAll("\\.0*$", ""))) {
                             custFromInput.setCustomerEmail(rs.getString("memWebsite")); //check for null too
-                            System.out.println("Match found!");
+                            //System.out.println("Match found!");
                         }
                     }
                 }
                 }
         }catch(SQLException e){
-            System.out.println(e);
+            //System.out.println(e);
+            log.error(e.toString());
             log.debug("Connection to database failed!");
         }
 

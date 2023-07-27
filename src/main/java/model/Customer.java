@@ -55,12 +55,12 @@ public class Customer {
         if(splitEmailAddress != null) {
             for (String current : splitEmailAddress) {
                 boolean valid = validateEmail(current);
-                if (valid) {
-                    this.customerEmail = current; //TODO: implement when Map is implemented.
-                    System.out.println("Valid Email!");
+                if (valid) { //TODO: implement when Map is implemented. Valid emails put into map to be cycled through later
+                    this.customerEmail = current;
+                    System.out.println(customerName + "-ValidEmail-" + current);
                     emailAddressMap.put(current, false);
                 } else {
-                    System.out.println("Invalid Email!");
+                    System.out.println(customerName + "-InvalidEmail-" + current);
                 }
             }
             this.customerEmail = emailAddressString;

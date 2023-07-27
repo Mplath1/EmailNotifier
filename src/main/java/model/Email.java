@@ -1,6 +1,5 @@
 package model;
 
-import core.Main;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,9 +34,6 @@ public class Email implements Callable {
     File attachentFile;
     String emailSubject; //pass emailSubject from FXML in constructor. If no emailSubject in FXML use default
     String bodyText; //pass bodytext from FXML in constructor. If no bodytext in FXML use default
-
-
-
     Properties properties = System.getProperties();
     //Session session = Session.getDefaultInstance(properties);
     Session session = Session.getInstance(properties); //static?
@@ -62,8 +58,8 @@ public class Email implements Callable {
         String starttlsEnable = properties.getProperty("mail.smtp.starttls.enable");
     }
 
-    public void setAttachentFile(File attachentFile) {
-        this.attachentFile = attachentFile;
+    public void setAttachmentFile(File attachmentFile) {
+        this.attachentFile = attachmentFile;
     }
 
     @Override
