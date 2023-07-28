@@ -445,7 +445,7 @@ public class MainWindowController {
                     if(!emailAddresses.equals(null) && !emailAddresses.isEmpty() && emailAddresses.trim().length() != 0) {
 
                         String selectedFileName = attachmentFileComboBox.getSelectionModel().getSelectedItem().toString();
-
+                        //TODO: occasional error. If customer has two or more invoices, one invoice may get copied onto each successive attachement
                         Attachment otherAttachment = new Attachment(customerList.get(i), selectedFileName);
                         File fileAttachment = (File) otherAttachment.call(); //TODO:set this into email
                         Email theEmail = new Email(emailAddresses, selectedFileName, emailSubject, emailMessage);
