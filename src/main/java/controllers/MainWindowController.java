@@ -638,13 +638,22 @@ public class MainWindowController {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        //TODO: rewrite query to include IN clause reducing result set
-        String query = "SELECT strEmail, strCompanyName, memWebSite FROM tblARCustomer";// WHERE strCustomerType = Retail";
+
+        String query = "SELECT strEmail, strCompanyName, memWebSite FROM tblARCustomer ";// WHERE strCustomerType = Retail";
+        StringBuilder licensesToQuery = new StringBuilder(query);
+        licensesToQuery.append(" WHERE strEmail IN (");
+        for(Customer custFromInput : listOfPrenotifications){
+            licensesToQuery.append("\'" + custFromInput.getLicenseNumber() + "\',");
+        }
+        licensesToQuery.deleteCharAt(licensesToQuery.lastIndexOf(","));
+        licensesToQuery.append(");");
+        System.out.println(licensesToQuery.toString());
         progressLabel.setText("Connecting to database...");
         try (Connection conn = DriverManager.getConnection(dbConnection)) {
             log.debug("Connected to database successfully!");
             progressLabel.setText("Connected to database");
-            PreparedStatement preparedStatement = conn.prepareStatement(query);
+            //PreparedStatement preparedStatement = conn.prepareStatement(query);
+            PreparedStatement preparedStatement = conn.prepareStatement(licensesToQuery.toString());
             for (Customer custFromInput : listOfPrenotifications) {
                 String license = custFromInput.getLicenseNumber();
                 //System.out.println(license);
