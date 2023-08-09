@@ -171,6 +171,7 @@ public class MainWindowController {
             sb.append("Unable to load:\n" + e.toString());
             alert.setHeaderText("Load Failed");
         }finally{
+            //TODO: display grid with checkboxes choosing to send or not send
             fullMessage = sb.toString();
             alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
             alert.setContentText(fullMessage);
@@ -232,7 +233,7 @@ public class MainWindowController {
         }
             customerListToSend = populateEmailAddresses(customerListToSend);
            processList2(customerListToSend,emailSubject,emailMessage);
-            ///put tasks after process into overall cleanup method
+            //TODO: put tasks after process into overall cleanup method
 
         };
 
@@ -427,11 +428,6 @@ public class MainWindowController {
     //TODO: eliminate other processList method. possibly pass a callback
     public void processList2(ArrayList<Customer> customerList, String emailSubject, String emailMessage){
 
-//       customerList.get(1).setCustomerEmail("mplath@usawineimports.com");
-//       customerList.get(9).setCustomerEmail("map30269@yahoo.com;mplath@usawineimports.com");
-//        customerList.get(6).setCustomerEmail(null);
-//        customerList.get(7).setCustomerEmail("ArthurDent");
-
         Task altTask = new Task() {
             @Override
             protected Object call() throws Exception {
@@ -445,7 +441,7 @@ public class MainWindowController {
                     if(!emailAddresses.equals(null) && !emailAddresses.isEmpty() && emailAddresses.trim().length() != 0) {
 
                         String selectedFileName = attachmentFileComboBox.getSelectionModel().getSelectedItem().toString();
-                        //TODO: occasional error. If customer has two or more invoices, one invoice may get copied onto each successive attachement
+
                         Attachment otherAttachment = new Attachment(customerList.get(i), selectedFileName);
                         File fileAttachment = (File) otherAttachment.call(); //TODO:set this into email
                         Email theEmail = new Email(emailAddresses, selectedFileName, emailSubject, emailMessage);
@@ -647,7 +643,7 @@ public class MainWindowController {
         }
         licensesToQuery.deleteCharAt(licensesToQuery.lastIndexOf(","));
         licensesToQuery.append(");");
-        System.out.println(licensesToQuery.toString());
+
         progressLabel.setText("Connecting to database...");
         try (Connection conn = DriverManager.getConnection(dbConnection)) {
             log.debug("Connected to database successfully!");
@@ -656,20 +652,17 @@ public class MainWindowController {
             PreparedStatement preparedStatement = conn.prepareStatement(licensesToQuery.toString());
             for (Customer custFromInput : listOfPrenotifications) {
                 String license = custFromInput.getLicenseNumber();
-                //System.out.println(license);
                 ResultSet rs = preparedStatement.executeQuery();
                 while(rs.next()) {
                     if (rs.getString("strEmail") != null) {
                         log.debug(rs.getString("strEmail").trim().replaceAll("\\.0*$", ""));
                         if (custFromInput.getLicenseNumber().equals(rs.getString("strEmail").trim().replaceAll("\\.0*$", ""))) {
                             custFromInput.setCustomerEmail(rs.getString("memWebsite")); //check for null too
-                            //System.out.println("Match found!");
                         }
                     }
                 }
                 }
         }catch(SQLException e){
-            //System.out.println(e);
             log.error(e.toString());
             log.debug("Connection to database failed!");
         }
