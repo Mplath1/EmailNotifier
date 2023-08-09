@@ -30,14 +30,15 @@ public class Email implements Callable {
     String recipient;
     String sender; //static?
     InetAddress host; //static?
-    String attachmentName; //static? TODO: remove and use attachmentFile instead
-    File attachentFile;
+    String attachmentName; //static? TODO: remove and use attachmentFile instead. currently attachment name only used to set filename populate
+    File attachmentFile;
     String emailSubject; //pass emailSubject from FXML in constructor. If no emailSubject in FXML use default
     String bodyText; //pass bodytext from FXML in constructor. If no bodytext in FXML use default
     Properties properties = System.getProperties();
     //Session session = Session.getDefaultInstance(properties);
     Session session = Session.getInstance(properties); //static?
 
+    //TODO: pass Customer in at creation instead of String recipient to allow access to Customer emailMap
     public Email(String recipient, String attachmentName, String emailSubject, String bodyText ) throws IOException {
         this.recipient = recipient;
         this.attachmentName = attachmentName;
@@ -59,14 +60,14 @@ public class Email implements Callable {
     }
 
     public void setAttachmentFile(File attachmentFile) {
-        this.attachentFile = attachmentFile;
+        this.attachmentFile = attachmentFile;
     }
 
     @Override
     public Object call() throws Exception {
         return sendTheEmail();
     }
-    //add try and connection timeout
+    //TODO:add try and connection timeout
     public boolean sendTheEmail(){
         try{
             log.debug("session - {}",session);
@@ -90,7 +91,7 @@ public class Email implements Callable {
                         MimeMultipart invalidMultiPart = new MimeMultipart();
 //                        String filename = attachmentName;
 //                        DataSource source = new FileDataSource(filename);
-                        DataSource source = new FileDataSource(attachentFile);
+                        DataSource source = new FileDataSource(attachmentFile);
                         invalidAttachment.setDataHandler(new DataHandler(source));
                         invalidAttachment.setFileName(attachmentName);
 
@@ -121,7 +122,7 @@ public class Email implements Callable {
                     MimeMultipart invalidMultiPart = new MimeMultipart();
 //                    String filename = attachmentName;
 //                    DataSource source = new FileDataSource(filename);
-                    DataSource source = new FileDataSource(attachentFile);
+                    DataSource source = new FileDataSource(attachmentFile);
                     invalidAttachment.setDataHandler(new DataHandler(source));
                     invalidAttachment.setFileName(attachmentName);
 
@@ -151,7 +152,7 @@ public class Email implements Callable {
 //            attachmentBodyPart.setFileName("Prenotification of Pending NYSLA COD Status from USA Wine Imports.xls");
             String filePath = "src/resources/AttachmentTemplates/temp.xlsx"; //TODO: use dependency injection
 //            DataSource source = new FileDataSource(filePath);
-            DataSource source = new FileDataSource(attachentFile);
+            DataSource source = new FileDataSource(attachmentFile);
             attachmentBodyPart.setDataHandler(new DataHandler(source));
             attachmentBodyPart.setFileName(filename);
 
@@ -165,14 +166,14 @@ public class Email implements Callable {
                 log.debug("preparing to send email to:{}",recipient);
                 Transport.send(message);
                 log.debug("email successfully sent to:{}", recipient);
-                //set emailAddressMap entry in Customer class to true
+                //TODO: set emailAddressMap entry in Customer class to true
                 return true;
             }catch(SendFailedException e){
                 //this section catches emails that can't be sent (bounce backs) and constructs a new email that is sent
                 //to my inbox so that I'm aware the email was unsuccessful
                 log.debug("failure to send email:{}",recipient);
                 MimeMessage invalid = new MimeMessage(session);
-                invalid.setFrom("mplath@usawineimports.com");
+                invalid.setFrom("mplath@usawineimports.com"); //TODO: make sender and recipient variables
                 invalid.addRecipient(Message.RecipientType.TO,new InternetAddress("mplath@usawineimports.com"));
                 invalid.setSubject("Undeliverable: " + emailSubject);
                 BodyPart invalidBodyPart = new MimeBodyPart();

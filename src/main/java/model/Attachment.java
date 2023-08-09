@@ -31,6 +31,7 @@ public class Attachment implements Callable {
         theWorkbook = null;
     }
 
+    //TODO: create attachment within Email class. This was attachment can be assigned to email and also Customer is passed to email
     public Attachment(Customer customer, String templateFileName){
         this.customer = customer;
         this.templateFileName = templateFileName;
