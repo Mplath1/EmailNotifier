@@ -9,9 +9,9 @@
     <logger name="" level="TRACE"/>-->
 
     <property name = "LOG_FILE" value="LogFile" /> <!--specify output file here-->
-    <property name = "LOG_DIRECTORY" value="logfiles"/> <!--specify output directory here-->
+    <property name = "LOG_DIR" value="/logfiles"/> <!--specify output directory here-->
     <appender name = "FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${LOG_DIRECTORY}\\${LOG_FILE}.log</file>
+        <file>${LOG_FILE}.log</file>
         <filter class="ch.qos.logback.classic.filter.LevelFilter">
             <level>DEBUG</level>
             <onMatch>ACCEPT</onMatch>

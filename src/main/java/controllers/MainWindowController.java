@@ -158,7 +158,7 @@ public class MainWindowController {
             File fileToLoad = new File(listFile.getText());
             wb = WorkbookFactory.create(fileToLoad); //xls won't load here but xlsx will
             SpreadsheetVersion version = wb.getSpreadsheetVersion();
-            System.out.println(listFile.getText() + " loaded as " + wb.getSpreadsheetVersion().toString());
+            //System.out.println(listFile.getText() + " loaded as " + wb.getSpreadsheetVersion().toString());
             log.debug("Loaded \'{}\' as \'{}\'",listFile.getText(),wb.getSpreadsheetVersion());
             customerListToSend = loadListToSend2(wb);
             log.debug("list of {} customers loaded", customerListToSend.size());
@@ -588,7 +588,7 @@ public class MainWindowController {
         Iterator<Row> rowIterator = sheet.rowIterator();
         while (rowIterator.hasNext()) {
             Row row = rowIterator.next();
-            if (row != null) {
+            if (row != null) { //TODO: specify null. error occured with entirely blank row not counted null
                 Iterator<Cell> cellIterator = row.cellIterator();
                 ArrayList<String> rowContents = new ArrayList(8);
                 while (cellIterator.hasNext()) {

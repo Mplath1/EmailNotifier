@@ -5,6 +5,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
@@ -33,18 +34,27 @@ public class Main extends Application {
         rootFilePath = "src/resources/views/MainWindow.fxml";
         //rootFilePath = "target/classes/views/MainWindow.fxml";
         URL otherView = getClass().getClassLoader().getResource("views/MainWindow.fxml");
+        log.debug("FXML file loaded:{}",otherView.toString());
         //InputStream is = getClass().getClassLoader().getResourceAsStream("/views/MainWindow.fxml");
        // FileInputStream fxmlStream = (FileInputStream) is;
         MainWindowController controller = new MainWindowController();
+        log.debug("Controller created");
         loader.setController(controller);
+        log.debug("Controller set to {}",loader.getController().toString());
         loader.setLocation(otherView);
+        log.debug("View set to {}",loader.getLocation().toString());
         //loader.setRoot(otherView.getFile());
         //System.out.println(loader.getRoot().toString());
         log.debug("Loaded view \'{}\' from:{}",loader.getLocation().getFile(),loader.getLocation());
         Parent root = loader.load();
-
-        primaryStage.setTitle("Email Prenotifications");
-        primaryStage.setScene(new Scene(root, 350, 350));
+        //loader.setRoot(otherView);
+        log.debug("FXMLLoader successfully loaded");
+        String stageTitle = "Email Prenotifications";
+        primaryStage.setTitle(stageTitle);
+        log.debug("PrimaryStage Title set to \'{}\'",primaryStage.getTitle().toString());
+        //Scene mainScene = new Scene(root, 350, 350);
+        Scene mainScene = new Scene(root, 350, 350);
+        primaryStage.setScene(mainScene);
         primaryStage.show();
     }
 

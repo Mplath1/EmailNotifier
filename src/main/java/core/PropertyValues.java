@@ -23,6 +23,7 @@ public class PropertyValues {
         propertiesFileName = fileName;
         properties = new Properties();
         String propertiesdirectoryPath = "src/resources/config.properties";
+        String propertiesConfigFile = "./config.properties";
         try {
             inputStream = new FileInputStream(new File(propertiesdirectoryPath));
             properties.load(inputStream);
@@ -32,7 +33,9 @@ public class PropertyValues {
             log.error("ERROR:{}",e);
         } catch (IOException e) {
             e.printStackTrace();
+            log.error("ERROR:{}",e);
         }
+        log.debug("property file\'{}\' successfully loaded", propertiesFileName);
     }
 
     public String getPropertiesFileName() {
@@ -60,7 +63,6 @@ public class PropertyValues {
         }finally {
             inputStream.close();
         }
-
         return values;
     }
 
@@ -81,9 +83,10 @@ public class PropertyValues {
             Date time = new Date(System.currentTimeMillis());
 
             property = properties.getProperty(propertyName);
-            log.debug("propertyv\'{}\' retrieved as:{}",propertyName,property);
+            log.debug("property:\'{}\' retrieved as:{}",propertyName,property);
         }catch (Exception e){
             System.err.println(e);
+            log.error("ERROR:{}",e);
         }finally {
             inputStream.close();
         }
